@@ -9,6 +9,8 @@ lazy val akkaVersion = "2.6.8"
 val catsVersion = "2.1.1"
 val monocleVersion = "2.0.3"
 val akkaHttpVersion = "10.1.12"
+libraryDependencies += "org.tpolecat" %% "skunk-core" % "0.0.20"
+
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,

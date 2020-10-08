@@ -3,7 +3,7 @@ package chesslogic.rules
 import chesslogic.{Black, Color, White}
 import chesslogic.board.{Board, Position, Tile}
 
-object PawnRules extends Rules{
+object PawnRules extends MovingRules{
   override def getPossibleAttacks(position: Position,board: Board): List[Position] = {
     val l = List(getLeftAttack(position,board),getRightAttack(position,board))
     l.filter(_.isDefined).map(_.get)

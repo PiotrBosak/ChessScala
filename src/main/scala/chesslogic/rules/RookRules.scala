@@ -3,7 +3,7 @@ import chesslogic.Color
 import chesslogic.board.{Board, Position}
 import chesslogic.rules.RulesForMultiTileMoves.{getViablePositionForAttacks, getViablePositionsForMoves}
 
-object RookRules extends Rules {
+object RookRules extends MovingRules {
   override def getPossibleAttacks(position: Position, board: Board): List[Position] = {
     (for {
       tile <- board.getTile(position)

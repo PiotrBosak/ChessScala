@@ -6,7 +6,7 @@ import chesslogic.rules.RulesForMultiTileMoves.{getViablePositionForAttacks, get
 
 import scala.annotation.tailrec
 
-object BishopRules extends Rules {
+object BishopRules extends MovingRules {
 
   override def getPossibleAttacks(position: Position, board: Board): List[Position] = {
     (for {

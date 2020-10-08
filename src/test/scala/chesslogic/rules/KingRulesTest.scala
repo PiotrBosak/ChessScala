@@ -17,9 +17,10 @@ class KingRulesTest extends AnyFlatSpec{
     val second = first.makeMoveWithoutTurn(Position(2,5),Position(3,5)).get
     val third = second.makeMoveWithoutTurn(Position(3,5),Position(4,6)).get
     val fourth = third.makeMoveWithoutTurn(Position(4,6),Position(5,6)).get
-    val fifth= fourth.makeMoveWithoutTurn(Position(5,6),Position(6,6)).get
-    val sixth= fifth.makeMoveWithoutTurn(Position(6,6),Position(7,6)).get
-    assertResult(5)(KingRules.getPossibleAttacks(Position(7,6),sixth.currentBoard).size)
+    val fifth= fourth.makeMoveWithoutTurn(Position(7,7),Position(5,7)).get
+    val sixth= fifth.makeMoveWithoutTurn(Position(5,6),Position(5,7)).get
+    assertResult(0)(KingRules.getPossibleAttacks(Position(5,7),sixth.currentBoard).size)
+    assertResult(8)(KingRules.getPossibleMoves(Position(5,7),sixth.currentBoard).size)
     assertResult(31)(sixth.currentBoard.tiles.values.count(_.hasPiece))
 
   }

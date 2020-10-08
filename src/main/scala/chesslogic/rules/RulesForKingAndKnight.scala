@@ -2,7 +2,7 @@ package chesslogic.rules
 
 import chesslogic.board.{Board, Position}
 
-object RulesForKingAndKnight {
+object RulesForKingAndKnight extends Rules{
 
   def getAllMoves(position: Position, board: Board, combinations: List[(Int, Int)]): (List[Position], List[Position]) = {
     board.getTile(position) match {

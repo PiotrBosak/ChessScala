@@ -15,6 +15,8 @@ case class Tile private(color: Color, position: Position, currentPiece: Option[P
 
   def isPieceColorDifferent(another:Tile): Boolean = isPieceColorDifferent(Some(another))
 
+
+
 }
 
 object Tile {

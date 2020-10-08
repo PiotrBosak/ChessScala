@@ -1,14 +1,14 @@
 package chesslogic.game
 
 import chesslogic.board.{Board, BoardFactory, Position}
-import chesslogic.pieces.{Pawn, Piece}
-import chesslogic.rules.PawnRules
+import chesslogic.pieces._
+import chesslogic.rules.{BishopRules, KingRules, KnightRules, PawnRules, QueenRules, RookRules}
 
 case class Game(gameHistory:List[Board] = List(Board())) {
 
   val currentBoard: Board = gameHistory.head
 
-  def makeMove(from:Position,to:Position):Option[Game] = {
+  def makeMoveWithoutTurn(from:Position, to:Position):Option[Game] = {
     val currentBoard = gameHistory.head
     val possibleMovesOption = getPossibleMoves(from,currentBoard)
     for {
@@ -43,7 +43,11 @@ case class Game(gameHistory:List[Board] = List(Board())) {
   private def getMovesForPiece(piece: Piece,board:Board,position: Position) = {
     piece match {
       case Pawn(_) => PawnRules.getPossibleMoves(position,board) ++ PawnRules.getPossibleAttacks(position,board)
-      case _ => throw new RuntimeException("not implemented yet")
+      case Bishop(_) => BishopRules.getPossibleMoves(position, board) ++ BishopRules.getPossibleAttacks(position, board)
+      case Rook(_) => RookRules.getPossibleMoves(position,board) ++ RookRules.getPossibleAttacks(position, board)
+      case Queen(_) => QueenRules.getPossibleMoves(position, board) ++ QueenRules.getPossibleAttacks(position, board)
+      case Knight(_) => KnightRules.getPossibleMoves(position, board) ++ KnightRules.getPossibleAttacks(position, board)
+      case King(_) => KingRules.getPossibleMoves(position, board) ++ KingRules.getPossibleAttacks(position, board)
     }
   }
 

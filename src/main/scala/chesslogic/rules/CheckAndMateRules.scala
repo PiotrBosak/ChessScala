@@ -5,7 +5,7 @@ import chesslogic.board.Board
 import chesslogic.game.Game
 import chesslogic.pieces.King
 
-object CheckAndMateRules extends Rules {
+object CheckAndMateRules {
   def isKingChecked(board:Board,kingColor:Color):Boolean =
     isKingAttacked(board, kingColor)
 
@@ -19,7 +19,7 @@ object CheckAndMateRules extends Rules {
       tile.currentPiece match {
         case Some(piece) if piece.color != kingColor =>(piece,tile.position)
       }
-    }).toList.flatMap(tuple => Board.getMovesForPiece(tuple._1,board,tuple._2))
+    }).flatMap(tuple => board.getMovesForPiece(tuple._1,tuple._2)).toList
 
     possibleAttacks.contains(kingTile.position)
   }
@@ -32,7 +32,7 @@ object CheckAndMateRules extends Rules {
       }
     }).toList
     val allPossibleMoves = tilesWithPieces.map(tuple => {
-      (tuple._1.position,Board.getMovesForPiece(tuple._2,board,tuple._1.position))
+      (tuple._1.position,board.getMovesForPiece(tuple._2,tuple._1.position))
     })
     val allPossibleScenarios = for {
       moveTuple <- allPossibleMoves

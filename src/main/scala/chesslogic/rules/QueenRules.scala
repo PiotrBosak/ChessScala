@@ -1,7 +1,8 @@
 package chesslogic.rules
 import chesslogic.board.{Board, Position}
+import chesslogic.pieces.Queen
 
-object QueenRules extends MovingRules {
+object QueenRules extends MovingRules[Queen] {
   override def getPossibleMoves(position: Position, board: Board): List[Position] =
     RookRules.getPossibleMoves(position,board) ++ BishopRules.getPossibleMoves(position,board)
 

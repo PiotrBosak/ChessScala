@@ -1,9 +1,10 @@
 package chesslogic.rules
 import chesslogic.Color
 import chesslogic.board.{Board, Position}
+import chesslogic.pieces.Rook
 import chesslogic.rules.RulesForMultiTileMoves.{getViablePositionForAttacks, getViablePositionsForMoves}
 
-object RookRules extends MovingRules {
+object RookRules extends MovingRules[Rook] {
   override def getPossibleAttacks(position: Position, board: Board): List[Position] = {
     (for {
       tile <- board.getTile(position)

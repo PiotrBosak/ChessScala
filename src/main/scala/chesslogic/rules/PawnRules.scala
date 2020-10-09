@@ -1,13 +1,15 @@
 package chesslogic.rules
 
 import chesslogic.{Black, Color, White}
-import chesslogic.board.{Board, Position, Tile}
+import chesslogic.board.{Board, Move, Position, Tile}
 import chesslogic.pieces.Pawn
 
 object PawnRules extends MovingRules[Pawn]{
   override def getPossibleAttacks(position: Position,board: Board): List[Position] = {
-    val l = List(getLeftAttack(position,board),getRightAttack(position,board))
-    l.filter(_.isDefined).map(_.get)
+    List(getLeftAttack(position,board),
+      getRightAttack(position,board),
+      lePassant(position,board))
+    .filter(_.isDefined).map(_.get)
   }
 
   override def getPossibleMoves(position: Position,board: Board): List[Position] = {
@@ -32,6 +34,46 @@ object PawnRules extends MovingRules[Pawn]{
     }
 
   }
+
+  private def lePassant(position: Position,board: Board):Option[Position] = {
+    val first = lePassantGet(position,board,isLeft = true)
+    val second = lePassantGet(position,board,isLeft = false)
+
+    first match {
+      case Some(value) => Some(value)
+      case None =>second
+    }
+
+  }
+
+  private def lePassantGet(position: Position,board: Board,isLeft:Boolean):Option[Position] = {
+    val difference = if(isLeft) -1 else 1
+    for {
+      tile <- board.getTile(position)
+      piece <- tile.currentPiece
+      attackingColor = piece.color
+      lastMove <- board.previousMove
+
+      positionToLeft = position.copy(column = position.column+difference) if checkTileForLePassant(lastMove,attackingColor,positionToLeft)
+      rowDifference = if(attackingColor == White) 1 else -1
+      positionToMove = positionToLeft.copy(row = positionToLeft.row + rowDifference)
+    } yield positionToMove
+  }
+
+  private def checkTileForLePassant(move:Move,attackingColor:Color,attackingTilePosition:Position):Boolean = {
+    val startingEnemyRow = if(attackingColor == White) 7 else 2
+    val isRowTheSame = move.to.position.row == attackingTilePosition.row
+    val isPreviousStartCorrect = move.from.position.row == startingEnemyRow
+    val isColumnTheSame = move.to.position.column == attackingTilePosition.column
+
+    val isEnemyPawn = move.from.currentPiece match {
+      case Some(piece) => piece.isInstanceOf[Pawn] && piece.color != attackingColor
+      case None =>false
+    }
+    isRowTheSame && isPreviousStartCorrect && isEnemyPawn && isColumnTheSame
+
+  }
+
 
   private def getLeftAttack(position: Position,board: Board):Option[Position] = {
     val pieceTileOption = board.getTile(position)

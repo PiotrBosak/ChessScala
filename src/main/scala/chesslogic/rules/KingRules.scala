@@ -1,6 +1,5 @@
 package chesslogic.rules
 
-import chesslogic.{Black, White}
 import chesslogic.board.{Board, Position}
 import chesslogic.pieces.King
 import chesslogic.rules.CheckAndMateRules.isKingChecked

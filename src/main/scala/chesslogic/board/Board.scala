@@ -1,15 +1,18 @@
 package chesslogic.board
 
+import chesslogic.White
 import chesslogic.pieces.{Bishop, King, Knight, Pawn, Piece, Queen, Rook}
 import chesslogic.rules.{BishopRules, CheckAndMateRules, KingRules, KnightRules, PawnRules, QueenRules, RookRules}
 
-case class Board private (tiles:Map[Position, Tile]) {
+case class Board private (tiles:Map[Position, Tile],previousMove:Option[Move]) {
+
+
 
   def getTile(position: Position):Option[Tile] = tiles.get(position)
 
-  def changeTile(tile:Tile):Board ={
+  def updateBoard(tile:Tile,move: Move):Board ={
     val newTiles = tiles + (tile.position -> tile)
-    Board(newTiles)
+    Board(newTiles,Some(move))
   }
    def getPossibleMoves(position: Position):Option[List[Position]] = for {
     tile <- getTile(position)
@@ -29,30 +32,63 @@ case class Board private (tiles:Map[Position, Tile]) {
     }
   }
 
-  def getBoardAfterMove(tileFrom:Tile,tileTo:Tile):Option[Board] = {
-     tileFrom.currentPiece.map(piece => {
+  def getBoardAfterMove(move: Move,board: Board):Option[Board] = {
+     move.from.currentPiece.map(piece => {
        (piece,
-         if (isCastling(tileFrom, tileTo)) makeCastlingMove(tileFrom, tileTo)
-        else makeNormalMove(tileFrom, tileTo,piece))
+         if (isCastling(move.from, move.to)) makeCastlingMove(move)
+         else if(isLePassant(move)) makeLePassant(move,piece,board)
+        else makeNormalMove(move,piece))
      }).filter(tuple => !CheckAndMateRules.isKingChecked(tuple._2,tuple._1.color)).map(_._2)
 
   }
-  private def makeCastlingMove(tileFrom: Tile, tileTo: Tile):Board = {
-    val kingNewColumn = tileTo.position.column
+
+  private def isLePassant(move: Move):Boolean = {
+    previousMove match {
+      case Some(previous) =>
+        isTwoTilePawnMove(previous) &&
+        move.to.position.column == previous.to.position.column &&
+          Math.abs(move.to.position.row - previous.to.position.row) == 1
+      case None =>false
+    }
+  }
+
+  private def isTwoTilePawnMove(move: Move):Boolean = {
+    val rowDifference = move.from.position.row - move.to.position.row
+    Math.abs(rowDifference) == 2 && (move.from.currentPiece match {
+      case Some(piece) => piece.isInstanceOf[Pawn]
+      case None => false
+    })
+  }
+
+
+  private def makeLePassant(move: Move,piece: Piece,board: Board):Board = {
+    val attackingColor = move.from.currentPiece.get.color
+    val difference = if(attackingColor == White) 1 else -1
+    val newTileFrom = move.from.copy(currentPiece = None,hasMoved = true)
+    val newTileTo = move.to.copy(currentPiece = Some(piece),hasMoved = true)
+    val capturedPawnTileOption = board.getTile(move.to.position.copy(row = move.to.position.row - difference))
+    val newTileAfterCapturing = capturedPawnTileOption.get.copy(currentPiece = None)
+    val newMove = Move(move.from,newTileTo)
+    updateBoard(newTileFrom,newMove).updateBoard(newTileTo,newMove).updateBoard(newTileAfterCapturing,newMove)
+
+  }
+  private def makeCastlingMove(move: Move):Board = {
+    val kingNewColumn = move.to.position.column
     val rookOldColumn = if(kingNewColumn == 2) 1 else 8
     val rookNewColumn = if(kingNewColumn == 2) 3 else 6
 
    val gameOption =  for {
-      oldRookTile <- getTile(Position(tileFrom.position.row,rookOldColumn))
-      tileAfterKing = tileFrom.copy(currentPiece = None)
-      kingPiece <- tileFrom.currentPiece
+      oldRookTile <- getTile(Position(move.from.position.row,rookOldColumn))
+      tileAfterKing = move.from.copy(currentPiece = None)
+      kingPiece <- move.from.currentPiece
       rookPiece <- oldRookTile.currentPiece
-      newKingTile = tileTo.copy(currentPiece = Some(kingPiece),hasMoved = true)
+      newKingTile = move.to.copy(currentPiece = Some(kingPiece),hasMoved = true)
       tileAfterRook = oldRookTile.copy(currentPiece = None)
-      newRookPosition = Position(tileFrom.position.row,rookNewColumn)
+      newRookPosition = Position(move.from.position.row,rookNewColumn)
       tileForRook <- getTile(newRookPosition)
       newRookTile = tileForRook.copy(currentPiece = Some(rookPiece))
-    } yield changeTile(tileAfterKing).changeTile(newKingTile).changeTile(tileAfterRook).changeTile(newRookTile)
+      newMove = Move(move.from,newKingTile)
+    } yield updateBoard(tileAfterKing,newMove).updateBoard(newKingTile,newMove).updateBoard(tileAfterRook,newMove).updateBoard(newRookTile,newMove)
 
     gameOption.getOrElse(throw new RuntimeException("this should never happen!!!"))
 
@@ -66,10 +102,11 @@ case class Board private (tiles:Map[Position, Tile]) {
 
   }
 
-    private def makeNormalMove(tileFrom: Tile, tileTo: Tile,pieceMoving:Piece):Board ={
-       val newTileFrom = tileFrom.copy(currentPiece = None,hasMoved = true)
-        val newTileTo = tileTo.copy(currentPiece = Some(pieceMoving),hasMoved = true)
-      changeTile(newTileFrom).changeTile(newTileTo)
+    private def makeNormalMove(move: Move,pieceMoving:Piece):Board ={
+       val newTileFrom = move.from.copy(currentPiece = None,hasMoved = true)
+        val newTileTo = move.to.copy(currentPiece = Some(pieceMoving),hasMoved = true)
+      val newMove = Move(move.from,newTileTo)
+      updateBoard(newTileFrom,newMove).updateBoard(newTileTo,newMove)
     }
 
 
@@ -77,5 +114,5 @@ case class Board private (tiles:Map[Position, Tile]) {
 
 }
 object Board {
-  def apply(): Board = Board(BoardFactory())
+  def apply(): Board = Board(BoardFactory(),None)
 }

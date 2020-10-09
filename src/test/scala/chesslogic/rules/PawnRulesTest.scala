@@ -37,11 +37,23 @@ class PawnRulesTest extends AnyFlatSpec{
     assertResult(2)(getPossibleAttacks(fourthPosition,afterFourth.currentBoard).size)
     assertResult(31)(afterFourth.currentBoard.tiles.values.count(_.hasPiece))
 
-
-
-
   }
 
+  "Pawn on A2" can "make le passant" in {
+    val first = game.makeMoveWithoutTurn(Position(2,4),Position(4,4)).get
+    val second = first.makeMoveWithoutTurn(Position(4,4),Position(5,4)).get
+    val third = second.makeMoveWithoutTurn(Position(7,5),Position(5,5)).get
+    assertResult(1)(PawnRules.getPossibleAttacks(Position(5,4),third.currentBoard).size)
+    val afterLePassant = third.makeMoveWithoutTurn(Position(5,4),Position(6,5)).get
+    assertResult(31)(afterLePassant.currentBoard.tiles.count(t => t._2.currentPiece.isDefined))
+  }
 
+  "Pawn on A2" should "not be able to do le passant" in {
+    val first = game.makeMoveWithoutTurn(Position(2,4),Position(4,4)).get
+    val second = first.makeMoveWithoutTurn(Position(4,4),Position(5,4)).get
+    val third = second.makeMoveWithoutTurn(Position(7,5),Position(6,5)).get
+    val fourth = third.makeMoveWithoutTurn(Position(6,5),Position(5,5)).get
+    assertResult(0)(PawnRules.getPossibleAttacks(Position(5,4),fourth.currentBoard).size)
+  }
 
 }

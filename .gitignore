@@ -9,3 +9,7 @@
 /*.iml
 /*.xml
 /.idea
+/.bsp/
+/chessLogic/target/
+/project/target/
+/target/

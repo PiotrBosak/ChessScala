@@ -9,12 +9,12 @@ object PawnRules extends MovingRules[Pawn]{
     List(getLeftAttack(position,board),
       getRightAttack(position,board),
       lePassant(position,board))
-    .filter(_.isDefined).map(_.get)
+    .collect { case Some(position) => position }
   }
 
   override def getPossibleMoves(position: Position,board: Board): List[Position] = {
-    val l = List(oneTileMove(position,board),twoTileMove(position,board))
-    l.filter(_.isDefined).map(_.get.position)
+    List(oneTileMove(position,board),twoTileMove(position,board))
+      .collect { case Some(tile) => tile.position }
   }
 
 

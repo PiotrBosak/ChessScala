@@ -13,7 +13,7 @@ object RookRules extends MovingRules[Rook] {
       getTopAttack(board, position, piece.color),
       getLeftAttack(board, position, piece.color),
       getRightAttack(board, position, piece.color),
-      getDownAttack(board, position, piece.color)).filter(_.isDefined).map(_.get)
+      getDownAttack(board, position, piece.color)).collect { case Some(position) => position}
       ).getOrElse(Nil)
   }
 

@@ -17,7 +17,7 @@ import scala.annotation.tailrec
       getRightTopAttack(board, position, piece.color),
       getLeftTopAttack(board, position, piece.color),
       getRightDownAttack(board, position, piece.color),
-      getLeftDownAttack(board, position, piece.color)).filter(_.isDefined).map(_.get)
+      getLeftDownAttack(board, position, piece.color)).collect { case Some(position) => position}
       ).getOrElse(Nil)
   }
 

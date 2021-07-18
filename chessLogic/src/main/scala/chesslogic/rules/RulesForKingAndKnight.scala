@@ -10,8 +10,7 @@ protected object RulesForKingAndKnight{
         val possiblePositions = combinations
           .map(t => Position(position.row + t._1, position.column + t._2))
           .map(board.getTile)
-          .filter(_.isDefined)
-          .map(_.get)
+          .collect { case Some(tile) => tile }
         val attackingPiece = tile.currentPiece.get
         val moves = possiblePositions.filter(!_.hasPiece).map(_.position)
         val attacks = possiblePositions.foldLeft(List.empty[Position])((acc, t) => {

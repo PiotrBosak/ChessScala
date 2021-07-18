@@ -3,7 +3,6 @@ name := "ChessScala"
 version := "0.1"
 
 
-scalaVersion := "2.13.3"
 lazy val akkaVersion = "2.6.8"
 val catsVersion = "2.1.1"
 val monocleVersion = "2.0.3"
@@ -11,8 +10,10 @@ val akkaHttpVersion = "10.1.12"
 libraryDependencies += "org.tpolecat" %% "skunk-core" % "0.0.20"
 lazy val root =(project in file("."))
 .settings(
-  name := "chessScala"
-).aggregate(chessLogic)
+  name := "chessScala",
+  scalaVersion := "2.13.5"
+
+).aggregate(chessLogic,backend)
 
 lazy val chessLogic = (project in file("chessLogic"))
   .settings(
@@ -34,6 +35,15 @@ lazy val chessLogic = (project in file("chessLogic"))
     scalaVersion := "2.13.5"
   )
 
-scalacOptions ++= Seq(
-  "-language:higherKinds"
-)
+  lazy val backend = (project in file("backend"))
+    .settings(
+      name := "backend",
+      scalaVersion := "2.13.5",
+      libraryDependencies ++= Seq(
+
+      )
+    ).dependsOn(chessLogic)
+//
+//scalacOptions ++= Seq(
+//  "-language:higherKinds"
+//)

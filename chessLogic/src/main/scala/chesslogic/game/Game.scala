@@ -1,9 +1,12 @@
 package chesslogic.game
 
+import cats.data.NonEmptyList
 import chesslogic.White
 import chesslogic.board.{Board, Move, Position}
+import chesslogic.game.Game.Turn
+import chesslogic.game.Game.Turn.{BlackTurn, WhiteTurn}
 
-case class Game(gameHistory:List[Board] = List(Board()), isWhiteTurn:Boolean = true) {
+case class Game(gameHistory:NonEmptyList[Board] = NonEmptyList.one(Board()), turn : Turn = WhiteTurn) {
 
   val currentBoard: Board = gameHistory.head
 
@@ -17,9 +20,9 @@ case class Game(gameHistory:List[Board] = List(Board()), isWhiteTurn:Boolean = t
       tileFrom <- currentBoard.getTile(from)
       attackingPiece <- tileFrom.currentPiece
       move = Move(tileFrom,tileToMove)
-      isColorCorrect = if(attackingPiece.color == White) isWhiteTurn else !isWhiteTurn
+      isColorCorrect = if(attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
       newBoard <- currentBoard.getBoardAfterMove(move,currentBoard) if isColorCorrect
-    } yield Game(newBoard :: this.gameHistory,isWhiteTurn = !this.isWhiteTurn)
+    } yield Game(newBoard :: this.gameHistory,turn = turn.changeTurn)
   }
   
 
@@ -33,16 +36,21 @@ case class Game(gameHistory:List[Board] = List(Board()), isWhiteTurn:Boolean = t
       tileFrom <- currentBoard.getTile(from)
       move = Move(tileFrom,tileToMove)
       newBoard <- currentBoard.getBoardAfterMove(move,currentBoard)
-    } yield Game(newBoard :: this.gameHistory,isWhiteTurn = !this.isWhiteTurn)
+    } yield Game(newBoard :: this.gameHistory,turn = turn.changeTurn)
 
   }
 
+}
 
-
-
-
-
-
-
-
+object Game {
+  sealed trait Turn {
+    def changeTurn : Turn = this match {
+      case Turn.WhiteTurn => BlackTurn
+      case Turn.BlackTurn => WhiteTurn
+    }
+  }
+  object Turn {
+    case object WhiteTurn extends Turn
+    case object BlackTurn extends Turn
+  }
 }

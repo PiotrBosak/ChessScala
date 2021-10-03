@@ -48,6 +48,4 @@ object CheckAndMateRules {
   def isKingMated(kingColor:Color,game:Game):Boolean =
     isKingAttacked(game.currentBoard, kingColor) && cannotBeDefended(kingColor,game)
 
-
-
 }

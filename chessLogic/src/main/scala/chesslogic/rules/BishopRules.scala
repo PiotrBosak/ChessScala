@@ -5,8 +5,6 @@ import chesslogic.board.{Board, Position}
 import chesslogic.pieces.Bishop
 import chesslogic.rules.RulesForMultiTileMoves.{getViablePositionForAttacks, getViablePositionsForMoves}
 
-import scala.annotation.tailrec
-
  object BishopRules extends MovingRules[Bishop] {
 
   override def getPossibleAttacks(position: Position, board: Board): List[Position] = {

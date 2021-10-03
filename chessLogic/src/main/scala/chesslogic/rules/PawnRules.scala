@@ -4,6 +4,7 @@ import chesslogic.{Black, Color, White}
 import chesslogic.board.{Board, Move, Position, Tile}
 import chesslogic.pieces.Pawn
 
+//todo it should be a typeclass, that way it doesn't make much sense
 object PawnRules extends MovingRules[Pawn]{
   override def getPossibleAttacks(position: Position,board: Board): List[Position] = {
     List(getLeftAttack(position,board),
@@ -36,14 +37,7 @@ object PawnRules extends MovingRules[Pawn]{
   }
 
   private def lePassant(position: Position,board: Board):Option[Position] = {
-    val first = lePassantGet(position,board,isLeft = true)
-    val second = lePassantGet(position,board,isLeft = false)
-
-    first match {
-      case Some(value) => Some(value)
-      case None =>second
-    }
-
+    lePassantGet(position,board,isLeft = true) orElse lePassantGet(position,board,isLeft = false)
   }
 
   private def lePassantGet(position: Position,board: Board,isLeft:Boolean):Option[Position] = {

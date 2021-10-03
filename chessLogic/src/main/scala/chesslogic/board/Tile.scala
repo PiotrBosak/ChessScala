@@ -5,7 +5,6 @@ import chesslogic.pieces.Piece
 
 case class Tile private(color: Color, position: Position, currentPiece: Option[Piece],hasMoved:Boolean = false) {
 
-
   def isEmpty: Boolean = currentPiece.isEmpty
 
   def hasPiece: Boolean = currentPiece.isDefined
@@ -14,8 +13,6 @@ case class Tile private(color: Color, position: Position, currentPiece: Option[P
     another.isDefined && another.get.currentPiece.isDefined && another.get.currentPiece.get.color != this.color
 
   def isPieceColorDifferent(another:Tile): Boolean = isPieceColorDifferent(Some(another))
-
-
 
 }
 
@@ -30,5 +27,4 @@ object Tile {
       if (position.row + position.column) % 2 == 1 || color == Black
     } yield tile
   }
-
 }

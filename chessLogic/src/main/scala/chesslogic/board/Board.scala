@@ -6,11 +6,9 @@ import chesslogic.rules.{BishopRules, CheckAndMateRules, KingRules, KnightRules,
 
 case class Board private (tiles:Map[Position, Tile],previousMove:Option[Move]) {
 
-
-
   def getTile(position: Position):Option[Tile] = tiles.get(position)
 
-  def updateBoard(tile:Tile,move: Move):Board ={
+  def updateBoard(tile:Tile,move: Move):Board = {
     val newTiles = tiles + (tile.position -> tile)
     Board(newTiles,Some(move))
   }
@@ -43,12 +41,10 @@ case class Board private (tiles:Map[Position, Tile],previousMove:Option[Move]) {
   }
 
   private def isLePassant(move: Move):Boolean = {
-    previousMove match {
-      case Some(previous) =>
-        isTwoTilePawnMove(previous) &&
+    previousMove.exists { previous =>
+      isTwoTilePawnMove(previous) &&
         move.to.position.column == previous.to.position.column &&
-          Math.abs(move.to.position.row - previous.to.position.row) == 1
-      case None =>false
+        Math.abs(move.to.position.row - previous.to.position.row) == 1
     }
   }
 
@@ -69,7 +65,9 @@ case class Board private (tiles:Map[Position, Tile],previousMove:Option[Move]) {
     val capturedPawnTileOption = board.getTile(move.to.position.copy(row = move.to.position.row - difference))
     val newTileAfterCapturing = capturedPawnTileOption.get.copy(currentPiece = None)
     val newMove = Move(move.from,newTileTo)
-    updateBoard(newTileFrom,newMove).updateBoard(newTileTo,newMove).updateBoard(newTileAfterCapturing,newMove)
+    updateBoard(newTileFrom,newMove)
+      .updateBoard(newTileTo,newMove)
+      .updateBoard(newTileAfterCapturing,newMove)
 
   }
   private def makeCastlingMove(move: Move):Board = {

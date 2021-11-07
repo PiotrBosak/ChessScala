@@ -1,7 +1,7 @@
 package backend.domain
 
 import derevo.cats.eqv
-import derevo.circe.magnolia.encoder
+import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.Encoder
 import io.estatico.newtype.macros._

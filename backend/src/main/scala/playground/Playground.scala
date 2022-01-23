@@ -13,4 +13,8 @@ object Playground {
 
   val a : Either[Int,Int] = 5.asLeft
 
+  def main(args: Array[String]): Unit = {
+    println("Hello")
+  }
+
 }

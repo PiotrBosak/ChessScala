@@ -1,30 +1,31 @@
 package backend.http.routes.auth
 
 import backend.algebras.AuthAlg
-import backend.domain.auth.LoginUser
 import backend.http.auth.users.CommonUser
-import cats.MonadThrow
-import dev.profunktor.auth.AuthHeaders
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import cats.Monad
 import cats.syntax.all._
-import org.http4s.circe.JsonDecoder
+import dev.profunktor.auth.AuthHeaders
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 
-final case class LogoutRoutes[F[_] : MonadThrow : JsonDecoder](
-                                                                authAlg: AuthAlg[F]
-                                                              ) extends Http4sDsl[F] {
+final case class LogoutRoutes[F[_] : Monad](
+                                             auth: AuthAlg[F]
+                                           ) extends Http4sDsl[F] {
 
   private[routes] val prefixPath = "/auth"
 
-  private val authedRoutes: AuthedRoutes[CommonUser, F] = AuthedRoutes.of {
+  private val httpRoutes: AuthedRoutes[CommonUser, F] = AuthedRoutes.of {
+
     case ar@POST -> Root / "logout" as user =>
       AuthHeaders
         .getBearerToken(ar.req)
-        .traverse_(authAlg.logout(_, user.value.name)) *> NoContent()
+        .traverse_(auth.logout(_, user.value.name)) *> NoContent()
+
   }
 
   def routes(authMiddleware: AuthMiddleware[F, CommonUser]): HttpRoutes[F] = Router(
-    prefixPath -> authMiddleware(authedRoutes)
+    prefixPath -> authMiddleware(httpRoutes)
   )
+
 }

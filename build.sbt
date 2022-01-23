@@ -1,5 +1,6 @@
 name := "ChessScala"
 import Dependencies._
+import sbt.Keys.libraryDependencies
 version := "0.1"
 
 
@@ -10,25 +11,28 @@ val akkaHttpVersion = "10.1.12"
 lazy val chessLogic = (project in file("chessLogic"))
   .settings(
     name := "chessLogic",
-    libraryDependencies ++= Seq(
+    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
+      libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % catsVersion,
       "com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
       "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
-      "org.scalatest" %% "scalatest" % "3.2.0"
-      ,
+      "org.scalatest" %% "scalatest" % "3.2.0",
       "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
       "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
       "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
       "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
-      "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion
+      "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
+
     ),
     scalaVersion := "2.13.5"
   )
+  .settings(scalacOptions -= "-Ywarn-unused")
+  .settings(scalacOptions -= "-Xfatal-warnings")
 lazy val root = (project in file("."))
   .settings(
-    name := "shopping-cart"
+    name := "chess"
   )
   .aggregate(chessLogic,core, tests)
 

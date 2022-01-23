@@ -1,7 +1,6 @@
 package chesslogic.board
 
 import chesslogic._
-import board.BoardFactory.{createTileWithBlackKing, createTileWithBlackQueen, createTileWithWhiteKing, createTileWithWhiteQueen, createTilesWithBlackBishops, createTilesWithBlackKnights, createTilesWithBlackPawns, createTilesWithBlackRooks, createTilesWithNoPieces, createTilesWithWhiteBishops, createTilesWithWhiteKnights, createTilesWithWhitePawns, createTilesWithWhiteRooks}
 import chesslogic.pieces._
 
 import scala.annotation.tailrec

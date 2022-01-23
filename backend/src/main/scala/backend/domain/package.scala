@@ -11,11 +11,15 @@ import eu.timepit.refined.types.string.NonEmptyString
 import io.circe.{Decoder, Encoder}
 import squants.market.{Currency, Money, USD}
 
+import java.time.Duration
+
 package object domain extends OrphanInstances
 
 // instances for types we don't control
 trait OrphanInstances {
-  implicit val moneyDecoder: Decoder[Money] =
+
+
+ implicit val moneyDecoder: Decoder[Money] =
     Decoder[BigDecimal].map(USD.apply)
 
   implicit val moneyEncoder: Encoder[Money] =

@@ -1,6 +1,8 @@
 name := "ChessScala"
+
 import Dependencies._
 import sbt.Keys.libraryDependencies
+
 version := "0.1"
 
 
@@ -10,9 +12,10 @@ val monocleVersion = "2.0.3"
 val akkaHttpVersion = "10.1.12"
 lazy val chessLogic = (project in file("chessLogic"))
   .settings(
+    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
     name := "chessLogic",
     addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
-      libraryDependencies ++= Seq(
+    libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % catsVersion,
       "com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
@@ -24,8 +27,11 @@ lazy val chessLogic = (project in file("chessLogic"))
       "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
       "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
       "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
-
+      Libraries.derevoCore,
+      Libraries.derevoCats,
+      Libraries.derevoCirce,
     ),
+
     scalaVersion := "2.13.5"
   )
   .settings(scalacOptions -= "-Ywarn-unused")
@@ -34,7 +40,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(chessLogic,core, tests)
+  .aggregate(chessLogic, core, tests)
 
 lazy val tests = (project in file("tests"))
   .configs(IntegrationTest)

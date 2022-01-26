@@ -1,13 +1,13 @@
 package backend.http.routes
 
-import backend.algebras.HealthCheck
+import backend.algebras.HealthCheckAlg
 import cats.Monad
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.Http4sDsl
 
 final case class HealthcheckRoutes[F[_]: Monad](
-                                               healthCheck: HealthCheck[F]
+                                               healthCheck: HealthCheckAlg[F]
                                                ) extends Http4sDsl[F] {
   private [routes] val prefixPath = "/healtcheck"
 

@@ -3,8 +3,15 @@ package chesslogic.board
 import chesslogic.White
 import chesslogic.pieces.{Bishop, King, Knight, Pawn, Piece, Queen, Rook}
 import chesslogic.rules.{BishopRules, CheckAndMateRules, KingRules, KnightRules, PawnRules, QueenRules, RookRules}
+import derevo.circe.magnolia.{decoder, encoder}
+import chesslogic.utils.orphanInstances._
+import derevo.derive
+import io.circe.{Encoder, KeyEncoder}
 
+
+@derive(encoder,decoder)
 case class Board private (tiles:Map[Position, Tile],previousMove:Option[Move]) {
+
 
   def getTile(position: Position):Option[Tile] = tiles.get(position)
 

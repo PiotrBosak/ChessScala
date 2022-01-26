@@ -1,13 +1,13 @@
 package chesslogic.rules
 
 import chesslogic.board.Position
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import chesslogic.rules.QueenRules.getPossibleMoves
 import org.scalatest.flatspec.AnyFlatSpec
 
 class QueenRulesTest extends AnyFlatSpec{
 
-  val game: Game = Game()
+  val game: FullGame = FullGame()
   "Queen" should "have 0 possible moves at the beginning" in {
     val startingBoard = game.currentBoard
     assertResult(0)(getPossibleMoves(Position(8,4),startingBoard).size)

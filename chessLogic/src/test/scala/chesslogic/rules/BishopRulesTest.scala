@@ -1,12 +1,12 @@
 package chesslogic.rules
 
 import chesslogic.board.Position
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import chesslogic.rules.BishopRules.getPossibleMoves
 import org.scalatest.flatspec.AnyFlatSpec
 
 class BishopRulesTest extends AnyFlatSpec{
-  val game = Game()
+  val game = FullGame()
 
   "Bishop on C1" should "have 0 moves possible at the start" in {
     val startingBoard = game.currentBoard

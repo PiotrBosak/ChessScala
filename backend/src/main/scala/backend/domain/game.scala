@@ -1,7 +1,9 @@
 package backend.domain
 
+import backend.domain.auth.UserId
 import backend.domain.gameLogic.Position
 import chesslogic.board.Board
+import chesslogic.game.SimpleGame
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import dev.profunktor.redis4cats.codecs.Codecs.derive
@@ -12,8 +14,19 @@ import java.util.UUID
 object game {
 
 
-  @derive(decoder)
-  sealed trait Rank
+  @derive(decoder, encoder)
+  sealed trait Rank {
+    def toNumber = this match {
+      case Rank.One => 1
+      case Rank.Two => 2
+      case Rank.Three => 3
+      case Rank.Four => 4
+      case Rank.Five => 5
+      case Rank.Six => 6
+      case Rank.Seven => 7
+      case Rank.Eight => 8
+    }
+  }
   object Rank {
     final case object One extends Rank
     final case object Two  extends Rank
@@ -25,8 +38,19 @@ object game {
     final case object Eight extends Rank
   }
 
-  @derive(decoder)
-  sealed trait File
+  @derive(decoder, encoder)
+  sealed trait File {
+    def toNumber: Int = this match {
+      case File.A => 1
+      case File.B => 2
+      case File.C => 3
+      case File.D => 4
+      case File.E => 5
+      case File.F => 6
+      case File.G => 7
+      case File.H => 8
+    }
+  }
   object File {
     final case object A extends File
     final case object B extends File
@@ -38,7 +62,7 @@ object game {
     final case object H extends File
   }
 
-  @derive(decoder)
+  @derive(encoder, decoder)
   final case class Move(from: Position, to: Position)
 
   @derive(encoder)
@@ -46,11 +70,19 @@ object game {
   final case object IllegalMove extends MoveResult
   final case object GameNotFound extends MoveResult
   final case object GameAlreadyFinished extends MoveResult
-  final case class MoveSuccessful(newBoard: Board)
+  final case class MoveSuccessful(newBoard: Board) extends MoveResult
 
-  @derive(encoder)
+  @derive(encoder, decoder)
   @newtype
   final case class GameId(value: UUID)
+
+  @derive(encoder,decoder)
+  final case class PvPGame(
+                          whitePlayer: UserId,
+                          blackPlayer: UserId,
+                          gameId: GameId,
+                          simpleGame: SimpleGame
+                          )
 
   @derive(encoder)
   sealed trait DrawProposal

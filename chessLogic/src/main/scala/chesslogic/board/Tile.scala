@@ -3,7 +3,11 @@ package chesslogic.board
 import cats.implicits._
 import chesslogic._
 import chesslogic.pieces.Piece
+import derevo.circe.magnolia.{decoder, encoder}
+import derevo.derive
 
+
+@derive(encoder,decoder)
 case class Tile private(color: Color, position: Position, currentPiece: Option[Piece], hasMoved: Boolean = false) {
 
   def isEmpty: Boolean = currentPiece.isEmpty

@@ -1,12 +1,12 @@
 package chesslogic.rules
 
 import chesslogic.board.Position
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import chesslogic.rules.PawnRules.{getPossibleAttacks, getPossibleMoves}
 import org.scalatest.flatspec.AnyFlatSpec
 
 class PawnRulesTest extends AnyFlatSpec{
- private  val game = Game()
+ private  val game = FullGame()
 
 
 "Pawn on A2 before moving" should "have 2 possible moves" in {

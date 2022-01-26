@@ -1,11 +1,11 @@
 package chesslogic.rules
 
 import chesslogic.board.Position
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import org.scalatest.flatspec.AnyFlatSpec
 
 class KnightRulesTest extends AnyFlatSpec{
-  private val game: Game = Game()
+  private val game: FullGame = FullGame()
 
   "Knight on B8" should "have 2 possible moves" in {
     val startingBoard = game.currentBoard

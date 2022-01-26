@@ -2,7 +2,7 @@ package chesslogic.rules
 
 import chesslogic.Color
 import chesslogic.board.Board
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import chesslogic.pieces.King
 
 object CheckAndMateRules {
@@ -24,7 +24,7 @@ object CheckAndMateRules {
     possibleAttacks.contains(kingTile.position)
   }
 
-  def cannotBeDefended(kingColor: Color,game:Game): Boolean = {
+  def cannotBeDefended(kingColor: Color,game:FullGame): Boolean = {
     val board = game.currentBoard
     val tilesWithPieces = board.tiles.values.collect(t => {
       t.currentPiece match {
@@ -45,7 +45,7 @@ object CheckAndMateRules {
 
   }
 
-  def isKingMated(kingColor:Color,game:Game):Boolean =
+  def isKingMated(kingColor:Color,game:FullGame):Boolean =
     isKingAttacked(game.currentBoard, kingColor) && cannotBeDefended(kingColor,game)
 
 }

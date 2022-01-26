@@ -2,12 +2,12 @@ package chesslogic.rules
 
 import chesslogic.White
 import chesslogic.board.Position
-import chesslogic.game.Game
+import chesslogic.game.FullGame
 import chesslogic.pieces.Rook
 import org.scalatest.flatspec.AnyFlatSpec
 
 class KingRulesTest extends AnyFlatSpec{
-  private val game = Game()
+  private val game = FullGame()
   "King on E1" should "have 0 moves" in {
     val startingBoard = game.currentBoard
     assertResult(0)(KingRules.getPossibleMoves(Position(1,5),startingBoard).size)

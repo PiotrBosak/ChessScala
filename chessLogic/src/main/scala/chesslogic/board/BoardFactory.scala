@@ -1,7 +1,8 @@
 package chesslogic.board
 
-import chesslogic._
-import chesslogic.pieces._
+import chesslogic.*
+import chesslogic.pieces.*
+import chesslogic.Color.*
 
 import scala.annotation.tailrec
 

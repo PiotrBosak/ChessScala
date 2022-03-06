@@ -1,14 +1,13 @@
 package chesslogic.board
 
-import cats.implicits._
-import chesslogic._
+import cats.implicits.*
+import chesslogic.Color.*
+import chesslogic.*
 import chesslogic.pieces.Piece
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
+import cats.derived.semiauto.*
+import io.circe.Codec
 
-
-@derive(encoder,decoder)
-case class Tile private(color: Color, position: Position, currentPiece: Option[Piece], hasMoved: Boolean = false) {
+case class Tile (color: Color, position: Position, currentPiece: Option[Piece], hasMoved: Boolean = false) derives Codec.AsObject {
 
   def isEmpty: Boolean = currentPiece.isEmpty
 

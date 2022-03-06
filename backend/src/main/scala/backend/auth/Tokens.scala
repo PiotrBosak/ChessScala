@@ -1,14 +1,13 @@
 package backend.auth
 
-import backend.config.types._
-import backend.effects._
-
+import backend.config.types.*
+import backend.effects.*
+import backend.domain.jwt.*
 import cats.Monad
-import cats.syntax.all._
-import dev.profunktor.auth.jwt._
-import eu.timepit.refined.auto._
-import io.circe.syntax._
-import pdi.jwt._
+import cats.syntax.all.*
+import eu.timepit.refined.auto.*
+import io.circe.syntax.*
+import pdi.jwt.*
 
 trait Tokens[F[_]] {
   def create: F[JwtToken]
@@ -25,8 +24,9 @@ object Tokens {
         for {
           uuid  <- GenUUID[F].make
           claim <- jwtExpire.expiresIn(JwtClaim(uuid.asJson.noSpaces), exp)
-          secretKey = JwtSecretKey(config.secret.value)
-          token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
+          token = JwtToken("Fix that")
+//          secretKey = JwtSecretKey(config.secret.value)
+//          token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
         } yield token
     }
 }

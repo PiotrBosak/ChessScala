@@ -1,16 +1,17 @@
 package backend.algebras
 
+import io.odin.Logger
 import backend.domain.auth.UserId
 import backend.domain.game.{GameId, PvPGame}
 import backend.effects.GenUUID
 import cats.Applicative
-import cats.syntax.all._
+import cats.syntax.all.*
 import cats.effect.kernel.{Ref, Resource, Temporal}
 import cats.effect.std.{Queue, Random}
 import chesslogic.board.Board
 import chesslogic.game.SimpleGame
 import dev.profunktor.redis4cats.RedisCommands
-import org.typelevel.log4cats.Logger
+import io.circe.syntax.*
 import skunk.Session
 
 import scala.concurrent.duration.FiniteDuration
@@ -23,9 +24,8 @@ trait GameMatcherAlg[F[_]] {
 object GameMatcherAlg {
   def make[F[_] : Temporal : GenUUID : Logger : Random](
                                                          postgres: Resource[F, Session[F]],
-                                                         userGames: RedisCommands[F, UserId, GameId],
+                                                         redis: RedisCommands[F, String, String],
                                                          cancellations: Ref[F, List[UserId]],
-                                                         games: RedisCommands[F, GameId, PvPGame],
                                                          queue: Queue[F, UserId],
                                                          waitPeriod: FiniteDuration
                                                        ): GameMatcherAlg[F] = new GameMatcherAlg[F] {
@@ -34,20 +34,20 @@ object GameMatcherAlg {
         case (fst, snd) =>
           GenUUID[F]
             .make
-            .map(GameId.apply)
+            .map(id => GameId.apply(id))
             .flatMap { gameId =>
               saveGame(fst, snd, gameId) >>
                 Logger[F].info {
                   s"found game between $fst and $snd"
                 } >>
-                userGames.set(fst, gameId) *> userGames.set(snd, gameId)
+                redis.set(fst.asJson.noSpaces, gameId.asJson.noSpaces) *> redis.set(snd.asJson.noSpaces, gameId.asJson.noSpaces)
             }
       }.flatten >> Temporal[F].sleep(waitPeriod) >> matchGames
 
     private def saveGame(first: UserId, second: UserId, gameId: GameId): F[Unit] = {
       Random[F].nextBoolean.flatMap { b =>
         val (white, black) = if (b) (first, second) else (second, first)
-        games.set(gameId, PvPGame(white, black, gameId, SimpleGame(Board())))
+        redis.set(gameId.asJson.noSpaces, PvPGame(white, black, gameId, SimpleGame(Board())).asJson.noSpaces)
       }
     }
 

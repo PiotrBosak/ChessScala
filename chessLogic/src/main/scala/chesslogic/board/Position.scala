@@ -1,7 +1,9 @@
 package chesslogic.board
 
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
+import io.circe.syntax.*
+import cats.derived.semiauto.*
+import io.circe.Codec
 
-@derive(encoder,decoder)
-case class Position(row:Int,column:Int)
+
+
+case class Position(row:Int,column:Int) derives Codec.AsObject

@@ -1,19 +1,18 @@
 package backend.http.routes.game
 
+import io.odin.Logger
 import backend.algebras.GameSearchAlg
-import cats.Monad
-import cats.syntax.all._
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import backend.domain.gamesearch
+import backend.http.auth.users.CommonUser
+import cats.{Applicative, Monad}
+import cats.syntax.all.*
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
-import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
-import cats.syntax.all._
-import backend.ext.http4s.refined.RefinedRequestDecoder
-import backend.http.auth.users.CommonUser
-import org.http4s.Status.Created
+import org.http4s.{AuthedRoutes, HttpRoutes}
 
-final case class GameSearchRoutes[F[_]: Monad](gameSearchAlg: GameSearchAlg[F]) extends Http4sDsl[F]{
+
+final case class GameSearchRoutes[F[_]: Monad: Logger](gameSearchAlg: GameSearchAlg[F]) extends Http4sDsl[F]{
 
 
   private [game] val prefixPath = "/gameSearch"
@@ -24,15 +23,19 @@ final case class GameSearchRoutes[F[_]: Monad](gameSearchAlg: GameSearchAlg[F]) 
       gameSearchAlg
         .startSearch(user.value.id)
         .flatMap(Ok(_))
-    case POST -> Root / "poke"  as user=>
+    case POST -> Root / "poll"  as user =>
       gameSearchAlg
-      .poke(user.value.id)
+      .poll(user.value.id)
+        .flatTap {
+          case gamesearch.GameFound(gameId) =>
+            Logger[F].warn(s"FOUND GAME $gameId")
+          case _ => Applicative[F].unit
+        }
       .flatMap(Ok(_))
-    case POST -> Root / "stop" as user=>
+    case POST -> Root / "stop" as user =>
       gameSearchAlg
       .stopSearching(user.value.id)
       .flatMap(Ok(_))
-
   }
 
   def routes(authMiddleware: AuthMiddleware[F,CommonUser]): HttpRoutes[F] = Router(

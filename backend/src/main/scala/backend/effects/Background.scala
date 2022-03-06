@@ -2,9 +2,9 @@ package backend.effects
 
 import scala.concurrent.duration.FiniteDuration
 
-import cats.effect._
+import cats.effect.*
 import cats.effect.std.Supervisor
-import cats.syntax.all._
+import cats.syntax.all.*
 
 trait Background[F[_]] {
   def schedule[A](fa: F[A], duration: FiniteDuration): F[Unit]

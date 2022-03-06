@@ -1,5 +1,5 @@
 package backend.http
-import cats.implicits._
+import cats.implicits.*
 import java.util.UUID
 
 object vars {

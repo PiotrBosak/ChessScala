@@ -1,7 +1,7 @@
 package chesslogic.board
 
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
-
-@derive(encoder,decoder)
-case class Move(from:Tile,to:Tile)
+import io.circe.Codec
+import cats.syntax.all.*
+import cats.*
+import cats.derived.semiauto.{derived, product, productOrder}
+case class Move(from:Tile,to:Tile) derives Codec.AsObject

@@ -1,36 +1,48 @@
 package backend.domain
 
 import backend.domain.game.GameId
-import derevo.circe.magnolia.encoder
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+
+
+import io.circe.syntax.*
+import io.circe.{Encoder, Json,Codec}
 
 import java.time.Duration
 
 object gamesearch {
 
-  @derive(encoder)
-  @newtype
+
+
   final case class InitialTryDuration(duration: Duration)
 
-  @derive(encoder)
-  sealed trait StartSearchResult
 
-  @derive(encoder)
-  final case object SearchStartSuccessful extends StartSearchResult
-  final case object SearchFailure extends StartSearchResult
-  final case object GameAlreadyStarted extends StartSearchResult
+  enum StartSearchResult derives Codec.AsObject:
+    case SearchStartSuccessful
+    case SearchFailure
+    case GameAlreadyStarted
 
-  @derive(encoder)
+
   sealed trait PokeResult
-  final case object GameNotFoundYet extends PokeResult
-  final case class GameFound(gameId: GameId) extends PokeResult
-  final case object PokeFailure extends PokeResult
+  case object GameNotFoundYet extends PokeResult
+  case class GameFound(gameId: GameId) extends PokeResult
+  case object PokeFailure extends PokeResult
 
-  @derive(encoder)
-  sealed trait StopSearchResult
-  final case object SearchStopSuccessful extends StopSearchResult
-  final case object GameAlreadyFound extends StopSearchResult
+  object PokeResult {
+    implicit  val pokeResultEncoder: Encoder[PokeResult] = Encoder.instance {
+      case GameNotFoundYet => Json.fromFields(List(("tag", Json.fromString("gameNotFoundYet"))))
+      case GameFound(gameId) => Json.fromFields(
+        List(
+          ("tag", Json.fromString("gameFound")),
+          ("value", gameId.asJson)
+        )
+      )
+      case PokeFailure => Json.fromFields(List(("tag", Json.fromString("pokeFailure"))))
+    }
+  }
+
+
+  enum StopSearchResult derives Codec.AsObject:
+    case SearchStopSuccessful
+    case GameAlreadyFound
 
 
 }

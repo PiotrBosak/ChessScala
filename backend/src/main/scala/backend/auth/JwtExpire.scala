@@ -4,7 +4,7 @@ import backend.config.types.TokenExpiration
 import backend.effects.JwtClock
 
 import cats.effect.Sync
-import cats.syntax.all._
+import cats.syntax.all.*
 import pdi.jwt.JwtClaim
 
 trait JwtExpire[F[_]] {
@@ -16,7 +16,7 @@ object JwtExpire {
     JwtClock[F].utc.map { implicit jClock =>
       new JwtExpire[F] {
         def expiresIn(claim: JwtClaim, exp: TokenExpiration): F[JwtClaim] =
-          Sync[F].delay(claim.issuedNow.expiresIn(exp.value.toMillis))
+          Sync[F].delay(claim.issuedNow.expiresIn(exp.value))
       }
     }
 }

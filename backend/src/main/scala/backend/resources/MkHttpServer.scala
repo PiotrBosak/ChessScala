@@ -1,12 +1,12 @@
 package backend.resources
 
+import io.odin.Logger
 import backend.config.types.HttpServerConfig
 import cats.effect.kernel.{Async, Resource}
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server
 import org.http4s.server.defaults.Banner
-import org.typelevel.log4cats.Logger
 
 trait MkHttpServer[F[_]] {
   def newEmber(cfg: HttpServerConfig, httpApp: HttpApp[F]): Resource[F, Server]

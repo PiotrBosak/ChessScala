@@ -1,14 +1,14 @@
 package chesslogic.game
 
-import chesslogic.White
+import chesslogic.Color.*
 import chesslogic.board.{Board, Move, Position}
 import chesslogic.game.FullGame.Turn
 import chesslogic.game.FullGame.Turn.{BlackTurn, WhiteTurn}
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
+import io.circe.Codec
 
-@derive(encoder,decoder)
-case class SimpleGame(currentBoard: Board, turn: Turn = WhiteTurn) {
+
+
+case class SimpleGame(currentBoard: Board, turn: Turn = WhiteTurn) derives Codec.AsObject {
 
   def makeMove(movingPlayer: Player, from: Position, to: Position): Option[SimpleGame] = {
     val possibleMovesOption = currentBoard.getPossibleMoves(from)

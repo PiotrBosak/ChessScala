@@ -1,15 +1,13 @@
 package backend.domain
 
-import derevo.cats.eqv
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
-import io.circe.Encoder
-import io.estatico.newtype.macros._
+
+
+import io.circe.{Encoder,Codec}
 import monocle.Iso
 
 object healthcheck {
 
-  @derive(eqv)
+
   sealed trait Status
   object Status {
     case object Okay        extends Status
@@ -25,17 +23,17 @@ object healthcheck {
       Encoder.forProduct1("status")(_.toString)
   }
 
-  @derive(encoder)
-  @newtype
+
+
   case class RedisStatus(value: Status)
 
-  @derive(encoder)
-  @newtype
+
+
   case class PostgresStatus(value: Status)
 
-  @derive(encoder)
+
   case class AppStatus(
       redis: RedisStatus,
       postgres: PostgresStatus
-  )
+  ) derives Codec.AsObject
 }

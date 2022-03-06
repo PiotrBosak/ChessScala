@@ -1,13 +1,8 @@
 package backend.domain
 
-import backend.optics.uuid
-import derevo.cats._
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
-import eu.timepit.refined.auto._
+import eu.timepit.refined.auto.*
 import eu.timepit.refined.types.string.NonEmptyString
-import io.circe._
-import io.estatico.newtype.macros.newtype
+import io.circe.*
 
 import java.util.UUID
 import javax.crypto.Cipher
@@ -15,66 +10,72 @@ import scala.util.control.NoStackTrace
 
 object auth {
 
-  @derive(decoder, encoder, eqv, show, uuid)
-  @newtype
-  case class UserId(value: UUID)
+  type UserId = UserId.Type
+  object UserId extends IdNewtype
 
-  @derive(decoder, encoder, eqv, show)
-  @newtype
-  case class UserName(value: String)
+  type UserName = UserName.Type
+  object UserName extends Newtype[String]
 
-  @derive(decoder, encoder, eqv, show)
-  @newtype
-  case class Password(value: String)
 
-  @derive(decoder, encoder, eqv, show)
-  @newtype
-  case class EncryptedPassword(value: String)
+  type Password = Password.Type
+  object Password extends Newtype[String]
 
-  @newtype
+  type Email = Email.Type
+  object Email extends Newtype[String]
+
+  type EncryptedPassword = EncryptedPassword.Type
+  object EncryptedPassword extends Newtype[String]
+
   case class EncryptCipher(value: Cipher)
+//  type EncryptCipher = EncryptCipher.Type
+//  object EncryptCipher extends Newtype[Cipher]
 
-  @newtype
   case class DecryptCipher(value: Cipher)
+//  type DecryptCipher = DecryptCipher.Type
+//  object DecryptCipher extends Newtype[Cipher]
 
   // --------- user registration -----------
 
-  @derive(decoder, encoder)
-  @newtype
-  case class UserNameParam(value: NonEmptyString) {
+
+
+  case class UserNameParam(value: NonEmptyString) derives Codec.AsObject {
     def toDomain: UserName = UserName(value.toLowerCase)
   }
 
-  @derive(decoder, encoder)
-  @newtype
-  case class PasswordParam(value: NonEmptyString) {
+  case class EmailParam(value: NonEmptyString) derives Codec.AsObject{
+    def toDomain: Email = Email(value)
+  }
+
+
+  case class PasswordParam(value: NonEmptyString) derives Codec.AsObject {
     def toDomain: Password = Password(value)
   }
 
-  @derive(decoder, encoder)
+
   case class CreateUser(
       username: UserNameParam,
+      email: EmailParam,
       password: PasswordParam
-  )
+  ) derives Codec.AsObject
 
-  case class UserNotFound(username: UserName)    extends NoStackTrace
-  case class UserNameInUse(username: UserName)   extends NoStackTrace
-  case class InvalidPassword(username: UserName) extends NoStackTrace
-  case object UnsupportedOperation               extends NoStackTrace
+  case class UserNotFound(username: UserName)    extends NoStackTrace derives Codec.AsObject
+  case class UserNameInUse(username: UserName)   extends NoStackTrace derives Codec.AsObject
+  case class InvalidPassword(username: UserName) extends NoStackTrace derives Codec.AsObject
+  case object UnsupportedOperation               extends NoStackTrace derives Codec.AsObject
 
   case object TokenNotFound extends NoStackTrace
 
   // --------- user login -----------
 
-  @derive(decoder, encoder)
+
   case class LoginUser(
       username: UserNameParam,
       password: PasswordParam
-  )
+  ) derives Codec.AsObject
 
   // --------- admin auth -----------
 
-  @newtype
+
   case class ClaimContent(uuid: UUID)
 
   object ClaimContent {

@@ -1,22 +1,25 @@
 package backend.algebras
 
-import backend.auth.{ Crypto, Tokens }
+import backend.auth.{Crypto, Tokens}
 import backend.config.types.TokenExpiration
-import backend.domain._
-import backend.domain.auth._
-import backend.http.auth.users._
-
-import cats._
-import cats.syntax.all._
-import dev.profunktor.auth.jwt.JwtToken
+import backend.domain.jwt.*
+import backend.domain.*
+import backend.domain.auth.*
+import backend.http.auth.users.*
+import eu.timepit.refined.auto.autoUnwrap
+import cats.*
+import cats.syntax.all.*
+import backend.domain.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.parser.decode
-import io.circe.syntax._
+import io.circe.syntax.*
 import pdi.jwt.JwtClaim
+
+import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
 
 trait AuthAlg[F[_]] {
 
-  def newUser(username: UserName, password: Password): F[JwtToken]
+  def newUser(username: UserName, email: Email, password: Password): F[JwtToken]
   def login(username:UserName, password: Password): F[JwtToken]
   def logout(token: JwtToken, userName: UserName) : F[Unit]
 }
@@ -32,7 +35,7 @@ object UsersAuth {
                               ): UsersAuthAlg[F, AdminUser] =
     new UsersAuthAlg[F, AdminUser] {
       def findUser(token: JwtToken)(claim: JwtClaim): F[Option[AdminUser]] =
-        (token === adminToken)
+        (token == adminToken)
           .guard[Option]
           .as(adminUser)
           .pure[F]
@@ -64,16 +67,16 @@ object AuthAlg {
                             ): AuthAlg[F] =
     new AuthAlg[F] {
 
-      private val TokenExpiration = tokenExpiration.value
+      private val TokenExpiration = FiniteDuration(tokenExpiration.value, MILLISECONDS)
 
-      def newUser(username: UserName, password: Password): F[JwtToken] =
+      def newUser(username: UserName, email: Email, password: Password): F[JwtToken] =
         users.find(username).flatMap {
           case Some(_) => UserNameInUse(username).raiseError[F, JwtToken]
           case None =>
             for {
-              i <- users.create(username, crypto.encrypt(password))
+              i <- users.create(username, email, crypto.encrypt(password))
               t <- tokens.create
-              u = User(i, username).asJson.noSpaces
+              u = User(i, username, email).asJson.noSpaces
               _ <- redis.setEx(t.value, u, TokenExpiration)
               _ <- redis.setEx(username.show, t.value, TokenExpiration)
             } yield t

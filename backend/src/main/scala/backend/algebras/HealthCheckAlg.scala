@@ -2,16 +2,16 @@ package backend.algebras
 
 import backend.domain.auth.UserId
 import backend.domain.game.GameId
-import backend.domain.healthcheck._
-import cats.effect._
-import cats.effect.implicits._
-import cats.syntax.all._
+import backend.domain.healthcheck.*
+import cats.effect.*
+import cats.effect.implicits.*
+import cats.syntax.all.*
 import dev.profunktor.redis4cats.RedisCommands
-import skunk._
-import skunk.codec.all._
-import skunk.implicits._
+import skunk.*
+import skunk.codec.all.*
+import skunk.implicits.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 trait HealthCheckAlg[F[_]] {
   def status: F[AppStatus]

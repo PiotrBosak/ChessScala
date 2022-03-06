@@ -1,11 +1,10 @@
 package backend
 
 import cats.implicits.catsSyntaxEitherId
-import cats.syntax.contravariant._
+import cats.syntax.contravariant.*
 import cats.{Eq, Monoid, Show}
 import chesslogic.board.{Position, Tile}
-import backend.domain.gameLogic.{Position => BPosition, Tile => BTile}
-import dev.profunktor.auth.jwt.JwtToken
+import backend.domain.gameLogic.{Position as BPosition, Tile as BTile}
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.numeric.NonNegative
@@ -27,14 +26,14 @@ trait OrphanInstances {
   implicit val moneyEncoder: Encoder[Money] =
     Encoder[BigDecimal].contramap(_.amount)
 
-  implicit val keyPositionEncoder: KeyEncoder[Position] = KeyEncoder.instance(Encoder[Position].apply(_).noSpaces)
-  implicit val keyPositionDecoder: KeyDecoder[Position] = KeyDecoder.instance(j => Decoder[Position].decodeJson(Json.fromString(j)).toOption)
-  implicit val encodeMap = Encoder.encodeMap[Position,Tile]
-  implicit val decodeMap = Decoder.decodeMap[Position,Tile]
-  implicit val keyPositionEncoderB: KeyEncoder[BPosition] = KeyEncoder.instance(Encoder[BPosition].apply(_).noSpaces)
-  implicit val keyPositionDecoderB: KeyDecoder[BPosition] = KeyDecoder.instance(j => Decoder[BPosition].decodeJson(Json.fromString(j)).toOption)
-  implicit val encodeMapB = Encoder.encodeMap[BPosition,BTile]
-  implicit val decodeMapB = Decoder.decodeMap[BPosition,BTile]
+  given keyPositionEncoder: KeyEncoder[Position] = KeyEncoder.instance(Encoder[Position].apply(_).noSpaces)
+  given keyPositionDecoder: KeyDecoder[Position] = KeyDecoder.instance(j => Decoder[Position].decodeJson(Json.fromString(j)).toOption)
+  given encodeMap: Encoder.AsObject[Map[Position, Tile]] = Encoder.encodeMap[Position,Tile]
+  given decodeMap: Decoder[Map[Position, Tile]] = Decoder.decodeMap[Position,Tile]
+  given keyPositionEncoderB: KeyEncoder[BPosition] = KeyEncoder.instance(Encoder[BPosition].apply(_).noSpaces)
+  given keyPositionDecoderB: KeyDecoder[BPosition] = KeyDecoder.instance(j => Decoder[BPosition].decodeJson(Json.fromString(j)).toOption)
+  given encodeMapB: Encoder.AsObject[Map[BPosition, BTile]] = Encoder.encodeMap[BPosition,BTile]
+  given decodeMapB: Decoder[Map[BPosition, BTile]] = Decoder.decodeMap[BPosition,BTile]
 
   implicit val nonNegativeDecoder: Decoder[Int Refined NonNegative] =
     Decoder[Int].emap(i => if (i >= 0) Right(Refined.unsafeApply[Int,NonNegative](i)) else Left("Passed number is negative"))
@@ -68,10 +67,10 @@ trait OrphanInstances {
 
   implicit val moneyShow: Show[Money] = Show.fromToString
 
-  implicit val tokenEq: Eq[JwtToken] = Eq.by(_.value)
-
-  implicit val tokenShow: Show[JwtToken] = Show[String].contramap[JwtToken](_.value)
-
-  implicit val tokenEncoder: Encoder[JwtToken] =
-    Encoder.forProduct1("access_token")(_.value)
+//  implicit val tokenEq: Eq[JwtToken] = Eq.by(_.value)
+//
+//  implicit val tokenShow: Show[JwtToken] = Show[String].contramap[JwtToken](_.value)
+//
+//  implicit val tokenEncoder: Encoder[JwtToken] =
+//    Encoder.forProduct1("access_token")(_.value)
 }

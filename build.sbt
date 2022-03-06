@@ -1,38 +1,26 @@
 name := "ChessScala"
 
-import Dependencies._
+import Dependencies.{Libraries, _}
 import sbt.Keys.libraryDependencies
 
 version := "0.1"
 
-
-lazy val akkaVersion = "2.6.8"
-val catsVersion = "2.1.1"
-val monocleVersion = "2.0.3"
-val akkaHttpVersion = "10.1.12"
+val catsVersion = "2.7.0"
+val monocleVersion = "3.0.0-M6"
 lazy val chessLogic = (project in file("chessLogic"))
   .settings(
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
     name := "chessLogic",
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % catsVersion,
-      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
-      "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-      "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
-      "org.scalatest" %% "scalatest" % "3.2.0",
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
+      "org.scalatest" %% "scalatest" % "3.2.9",
       "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
       "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
-      Libraries.derevoCore,
-      Libraries.derevoCats,
-      Libraries.derevoCirce,
+      Libraries.circeCore,
+      Libraries.circeParser,
+      Libraries.kittens,
     ),
 
-    scalaVersion := "2.13.5"
+    scalaVersion := "3.1.1"
   )
   .settings(scalacOptions -= "-Ywarn-unused")
   .settings(scalacOptions -= "-Xfatal-warnings")
@@ -46,66 +34,83 @@ lazy val tests = (project in file("tests"))
   .configs(IntegrationTest)
   .settings(
     name := "chess-backend-test-suite",
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     Defaults.itSettings,
     libraryDependencies ++= Seq(
-      CompilerPlugin.kindProjector,
-      CompilerPlugin.betterMonadicFor,
-      CompilerPlugin.semanticDB,
-      Libraries.catsLaws,
-      Libraries.log4catsNoOp,
+      Libraries.cats,
+      Libraries.catsEffect,
+      Libraries.circeCore,
+      Libraries.circeParser,
+      Libraries.circeExtras,
+      Libraries.circeRefined,
+      Libraries.cirisCore,
+      Libraries.cirisRefined,
+      Libraries.fs2Core,
+      Libraries.fs2Kafka,
+      Libraries.http4sDsl,
+      Libraries.http4sMetrics,
+      Libraries.http4sServer,
+      Libraries.kittens,
+      Libraries.monocleCore,
+      Libraries.neutronCore,
+      Libraries.odin,
+      Libraries.redis4catsEffects,
+      Libraries.refinedCore,
+      Libraries.refinedCats,
       Libraries.monocleLaw,
-      Libraries.refinedScalacheck,
+      Libraries.skunk("core"),
+      Libraries.skunk("circe"),
+      Libraries.scalacheck,
       Libraries.weaverCats,
       Libraries.weaverDiscipline,
-      Libraries.weaverScalaCheck
+      Libraries.weaverScalaCheck,
+
     ),
-    scalaVersion := "2.13.5"
+    scalaVersion := "3.1.1"
   )
   .dependsOn(core)
 
 lazy val core = (project in file("backend"))
   .settings(
     name := "chess-backend",
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
     Defaults.itSettings,
-    scalaVersion := "2.13.5",
+    scalaVersion := "3.1.1",
     libraryDependencies ++= Seq(
-      CompilerPlugin.kindProjector,
-      CompilerPlugin.betterMonadicFor,
-      CompilerPlugin.semanticDB,
       Libraries.cats,
       Libraries.catsEffect,
       Libraries.catsRetry,
+      Libraries.jwtScala("core"),
+      Libraries.jwtScala("circe"),
       Libraries.circeCore,
-      Libraries.circeGeneric,
       Libraries.circeParser,
+      Libraries.circeExtras,
       Libraries.circeRefined,
       Libraries.cirisCore,
-      Libraries.cirisEnum,
       Libraries.cirisRefined,
-      Libraries.derevoCore,
-      Libraries.derevoCats,
-      Libraries.derevoCirce,
-      Libraries.fs2,
-      Libraries.http4sDsl,
-      Libraries.http4sServer,
-      Libraries.http4sClient,
+      Libraries.fs2Core,
+      Libraries.fs2Kafka,
       Libraries.http4sCirce,
-      Libraries.http4sJwtAuth,
-      Libraries.javaxCrypto,
-      Libraries.log4cats,
-      Libraries.logback % Runtime,
+      Libraries.log4cats("core"),
+      Libraries.log4cats("slf4j"),
+      Libraries.http4sClient,
+      Libraries.http4sDsl,
+      Libraries.http4sMetrics,
+      Libraries.http4sServer,
+      Libraries.kittens,
       Libraries.monocleCore,
-      Libraries.newtype,
+      Libraries.neutronCore,
+      Libraries.odin,
       Libraries.redis4catsEffects,
-      Libraries.redis4catsLog4cats,
       Libraries.refinedCore,
       Libraries.refinedCats,
-      Libraries.skunkCore,
-      Libraries.skunkCirce,
-      Libraries.squants
+      Libraries.skunk("core"),
+      Libraries.skunk("circe"),
+      Libraries.squants,
+      Libraries.monocleLaw % Test,
+      Libraries.scalacheck % Test,
+      Libraries.weaverCats % Test,
+      Libraries.weaverDiscipline % Test,
+      Libraries.weaverScalaCheck % Test
     )
   ).dependsOn(chessLogic)
 

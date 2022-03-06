@@ -4,18 +4,25 @@ import backend.domain.auth.UserId
 import backend.domain.gameLogic.Position
 import chesslogic.board.Board
 import chesslogic.game.SimpleGame
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
+import io.circe.Codec
+
 import dev.profunktor.redis4cats.codecs.Codecs.derive
-import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
 
 object game {
 
 
-  @derive(decoder, encoder)
-  sealed trait Rank {
+  enum Rank {
+    case One
+    case Two
+    case Three
+    case Four
+    case Five
+    case Six
+    case Seven
+    case Eight
+
     def toNumber = this match {
       case Rank.One => 1
       case Rank.Two => 2
@@ -27,19 +34,18 @@ object game {
       case Rank.Eight => 8
     }
   }
-  object Rank {
-    final case object One extends Rank
-    final case object Two  extends Rank
-    final case object Three extends Rank
-    final case object Four extends Rank
-    final case object Five extends Rank
-    final case object Six extends Rank
-    final case object Seven extends Rank
-    final case object Eight extends Rank
-  }
 
-  @derive(decoder, encoder)
-  sealed trait File {
+
+  enum File {
+    case A
+    case B
+    case C
+    case D
+    case E
+    case F
+    case G
+    case H
+
     def toNumber: Int = this match {
       case File.A => 1
       case File.B => 2
@@ -51,57 +57,47 @@ object game {
       case File.H => 8
     }
   }
-  object File {
-    final case object A extends File
-    final case object B extends File
-    final case object C extends File
-    final case object D extends File
-    final case object E extends File
-    final case object F extends File
-    final case object G extends File
-    final case object H extends File
+
+  final case class Move(from: Position, to: Position) derives Codec.AsObject
+
+
+  enum MoveResult derives Codec.AsObject {
+    case IllegalMove
+    case GameNotFound
+    case GameAlreadyFinished
+    case MoveSuccessful(newBoard: Board)
   }
 
-  @derive(encoder, decoder)
-  final case class Move(from: Position, to: Position)
 
-  @derive(encoder)
-  sealed trait MoveResult
-  final case object IllegalMove extends MoveResult
-  final case object GameNotFound extends MoveResult
-  final case object GameAlreadyFinished extends MoveResult
-  final case class MoveSuccessful(newBoard: Board) extends MoveResult
+  type GameId = GameId.Type
+  object GameId extends IdNewtype
 
-  @derive(encoder, decoder)
-  @newtype
-  final case class GameId(value: UUID)
 
-  @derive(encoder,decoder)
   final case class PvPGame(
                           whitePlayer: UserId,
                           blackPlayer: UserId,
                           gameId: GameId,
                           simpleGame: SimpleGame
-                          )
+                          ) derives Codec.AsObject
 
-  @derive(encoder)
+
   sealed trait DrawProposal
-  final case object DrawProposalSuccessful extends DrawProposal
-  final case object DrawProposalFailed extends DrawProposal
+  case object DrawProposalSuccessful extends DrawProposal
+  case object DrawProposalFailed extends DrawProposal
 
-  @derive(decoder)
+
   sealed trait DrawProposalAnswer
-  final case object DrawAccepted extends DrawProposalAnswer
-  final case object DrawRefused extends DrawProposalAnswer
+  case object DrawAccepted extends DrawProposalAnswer
+  case object DrawRefused extends DrawProposalAnswer
 
-  @derive(encoder)
+
   sealed trait DrawProposalAnswerResult
-  final case object ProposalAnswerSuccessful extends DrawProposalAnswerResult
-  final case object ProposalAnswerFailed extends DrawProposalAnswerResult
+  case object ProposalAnswerSuccessful extends DrawProposalAnswerResult
+  case object ProposalAnswerFailed extends DrawProposalAnswerResult
 
-  @derive(encoder)
+
   sealed trait ForfeitResult
-  final case object ForfeitSuccessful extends ForfeitResult
-  final case object ForfeitFailed extends ForfeitResult
+  case object ForfeitSuccessful extends ForfeitResult
+  case object ForfeitFailed extends ForfeitResult
 
 }

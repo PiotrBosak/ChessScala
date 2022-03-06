@@ -1,47 +1,39 @@
 package backend.config
 
-import backend.ext.ciris.configDecoder
-import ciris._
-import ciris.refined._
+import backend.domain.Newtype
+import ciris.*
+import ciris.refined.*
 import com.comcast.ip4s.{Host, Port}
-import derevo.cats.show
-import derevo.derive
-import eu.timepit.refined.cats._
+import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.net.UserPortNumber
-import eu.timepit.refined.types.numeric.PosInt
-import eu.timepit.refined.types.string.NonEmptyString
-import io.estatico.newtype.macros.newtype
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
 object types {
 
-  @derive(configDecoder, show)
-  @newtype
-  case class AdminUserTokenConfig(secret: NonEmptyString)
 
-  @derive(configDecoder, show)
-  @newtype
-  case class JwtSecretKeyConfig(secret: NonEmptyString)
 
-  @derive(configDecoder, show)
-  @newtype
-  case class JwtAccessTokenKeyConfig(secret: NonEmptyString)
+  type AdminUserTokenConfig = AdminUserTokenConfig.Type
+  object AdminUserTokenConfig extends Newtype[String]
 
-  @derive(configDecoder, show)
-  @newtype
-  case class JwtClaimConfig(secret: NonEmptyString)
 
-  @derive(configDecoder, show)
-  @newtype
-  case class PasswordSalt(secret: NonEmptyString)
+  type JwtSecretKeyConfig = JwtSecretKeyConfig.Type
+  object JwtSecretKeyConfig extends Newtype[String]
 
-  @newtype case class TokenExpiration(value: FiniteDuration)
+  type JwtAccessTokenKeyConfig = JwtAccessTokenKeyConfig.Type
+  object JwtAccessTokenKeyConfig extends Newtype[String]
+  type JwtClaimConfig = JwtClaimConfig.Type
+  object JwtClaimConfig extends Newtype[String]
+  type PasswordSalt = PasswordSalt.Type
+  object PasswordSalt extends Newtype[String]
 
-  @newtype case class ShoppingCartExpiration(value: FiniteDuration)
+  type TokenExpiration = TokenExpiration.Type
+  object TokenExpiration extends Newtype[Int]
+  type ShoppingCartExpiration = ShoppingCartExpiration.Type
+  object ShoppingCartExpiration extends Newtype[Int]
 
   case class CheckoutConfig(
-                             retriesLimit: PosInt,
+                             retriesLimit: Int,
                              retriesBackoff: FiniteDuration
                            )
 
@@ -63,21 +55,22 @@ object types {
                            )
 
   case class PostgreSQLConfig(
-                               host: NonEmptyString,
-                               port: UserPortNumber,
-                               user: NonEmptyString,
-                               password: NonEmptyString,
-                               database: NonEmptyString,
-                               max: PosInt
+                               host: String,
+                               port: Int,
+                               user: String,
+                               password: String,
+                               database: String,
+                               max: Int
                              )
 
-  @newtype case class RedisURI(value: NonEmptyString)
-
-  @newtype case class RedisConfig(uri: RedisURI)
-
-  @newtype case class PaymentURI(value: NonEmptyString)
-
-  @newtype case class PaymentConfig(uri: PaymentURI)
+  type RedisURI = RedisURI.Type
+  object RedisURI extends Newtype[String]
+  type RedisConfig = RedisConfig.Type
+  object RedisConfig extends Newtype[RedisURI]
+  type PaymentURI = PaymentURI.Type
+  object PaymentURI extends Newtype[String]
+  type PaymentConfig = PaymentConfig.Type
+  object PaymentConfig extends Newtype[PaymentURI]
 
   case class HttpServerConfig(
                                host: Host,

@@ -1,17 +1,31 @@
 package backend.config
 
-import scala.concurrent.duration._
-import backend.config.AppEnvironment._
-import backend.config.types._
+import ciris.*
+import backend.domain.{*, given}
+import com.comcast.ip4s.*
+
+import scala.concurrent.duration.*
+import backend.config.AppEnvironment.*
+import backend.config.types.*
 import cats.effect.Async
-import cats.syntax.all._
-import ciris._
-import ciris.refined._
-import com.comcast.ip4s._
-import eu.timepit.refined.auto._
-import eu.timepit.refined.cats._
+import cats.syntax.all.*
+import ciris.*
+import ciris.refined.*
+import com.comcast.ip4s.*
+import eu.timepit.refined.auto.*
+import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
+import org.tpolecat.typename.TypeName
 object Config {
+
+
+  given cirisConfigDecoder: ConfigDecoder[String, AppEnvironment] =
+    ConfigDecoder[String].mapOption("AppEnvironment") { s => s.toLowerCase match {
+      case "test" => Some(Test)
+      case "prod" => Some(Prod)
+      case _ => None
+    }
+    }
 
   def load[F[_]: Async]: F[AppConfig] =
     env("SC_APP_ENV")
@@ -19,7 +33,7 @@ object Config {
       .flatMap {
         case Test =>
           default[F](
-            RedisURI("redis://localhost"),
+            RedisURI("redis://localhost:6379"),
           )
         case Prod =>
           default[F](
@@ -41,7 +55,7 @@ object Config {
       AppConfig(
         AdminJwtConfig(jwtSecretKey, jwtClaim, adminToken),
         tokenKey,
-        TokenExpiration(30.minutes),
+        TokenExpiration(30.minutes.toMillis.toInt),
         salt,
         HttpClientConfig(
           timeout = 60.seconds,
@@ -57,7 +71,7 @@ object Config {
         ),
         RedisConfig(redisUri),
         HttpServerConfig(
-          host = host"0.0.0.0",
+          host = host"127.0.0.1",
           port = port"8080"
         )
       )

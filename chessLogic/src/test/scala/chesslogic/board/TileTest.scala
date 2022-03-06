@@ -1,7 +1,6 @@
 package chesslogic.board
 
-import akka.testkit.ImplicitSender
-import chesslogic.{Black, White}
+import chesslogic.Color.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.{BeforeAndAfterAll, TestSuite}
 
@@ -16,9 +15,6 @@ with BeforeAndAfterAll{
   "White A2 tile" should "be created" in {
     assert(Tile(White,Position(2,1),None).isDefined)
   }
-
-
-
-  }
+ }
 
 

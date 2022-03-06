@@ -1,12 +1,16 @@
 package chesslogic.game
 
 import cats.data.NonEmptyList
-import chesslogic.White
+import chesslogic.Color.*
+import cats.syntax.all.*
+import cats.*
+import cats.derived.semiauto.{derived, product, productOrder}
 import chesslogic.board.{Board, Move, Position}
 import chesslogic.game.FullGame.Turn
 import chesslogic.game.FullGame.Turn.{BlackTurn, WhiteTurn}
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
+import io.circe.Codec
+
+
 
 case class FullGame(gameHistory:NonEmptyList[Board] = NonEmptyList.one(Board()), turn : Turn = WhiteTurn) {
 
@@ -45,15 +49,13 @@ case class FullGame(gameHistory:NonEmptyList[Board] = NonEmptyList.one(Board()),
 }
 
 object FullGame {
-   @derive(encoder,decoder)
-  sealed trait Turn {
-    def changeTurn : Turn = this match {
-      case Turn.WhiteTurn => BlackTurn
-      case Turn.BlackTurn => WhiteTurn
-    }
-  }
-  object Turn {
-    case object WhiteTurn extends Turn
-    case object BlackTurn extends Turn
-  }
+
+  enum Turn derives Codec.AsObject, Eq, Show:
+    case WhiteTurn
+    case BlackTurn
+
+    def changeTurn : Turn = this match
+      case WhiteTurn => BlackTurn
+      case BlackTurn => WhiteTurn
+
 }

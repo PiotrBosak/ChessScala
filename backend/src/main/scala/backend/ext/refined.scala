@@ -1,8 +1,8 @@
 package backend.ext
 
-import eu.timepit.refined._
-import eu.timepit.refined.api._
-import eu.timepit.refined.auto._
+import eu.timepit.refined.*
+import eu.timepit.refined.api.*
+import eu.timepit.refined.auto.*
 import eu.timepit.refined.collection.Size
 import io.circe.Decoder
 

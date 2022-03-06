@@ -4,16 +4,17 @@ import backend.config.Config
 import backend.domain.auth.UserId
 import backend.modules.{Algebras, HttpApi, Security}
 import backend.resources.{AppResources, MkHttpServer}
-import cats.effect._
-import cats.effect.std.{Queue, Supervisor}
-import dev.profunktor.redis4cats.log4cats._
-import eu.timepit.refined.auto._
-import org.typelevel.log4cats.Logger
+import cats.effect.*
+import io.odin.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import io.odin.{Logger, consoleLogger}
+import cats.effect.std.{Queue, Random, Supervisor}
+import dev.profunktor.redis4cats.effect.Log.Stdout.*
+import eu.timepit.refined.auto.*
 
 object Main extends IOApp.Simple {
 
-  implicit val logger = Slf4jLogger.getLogger[IO]
+  given logger:Logger[IO] = consoleLogger()
 
   override def run: IO[Unit] =
     Config.load[IO].flatMap { cfg =>
@@ -21,15 +22,21 @@ object Main extends IOApp.Simple {
         Supervisor[IO].use { implicit sp =>
           Resource.liftK[IO](Ref.of[IO, List[UserId]](List.empty[UserId])).flatMap { cancellations =>
             Resource.liftK[IO](Queue.unbounded[IO, UserId]).flatMap { queue =>
-              AppResources
-                .make[IO](cfg)
-                .evalMap { res =>
-                  Security.make[IO](cfg, res.postgres, res.redis).map { security =>
-                    val services = Algebras.make[IO](res.postgres, res.redis, cancellations, queue)
-                    val api = HttpApi.make[IO](services, security)
-                    cfg.httpServerConfig -> api.httpApp
+              Resource.eval(Random.javaUtilRandom[IO](new java.util.Random)).flatMap { implicit random =>
+                AppResources
+                  .make[IO](cfg)
+                  .evalMap { res =>
+                    Security.make[IO](cfg, res.postgres, res.redis).flatMap { security =>
+                      val services = Algebras.make[IO](res.postgres, res.redis, cancellations, queue)
+                      val api = HttpApi.make[IO](services, security)
+                      //fix it, really ugly
+                      services.gameMatcherAlg
+                        .matchGames
+                        .start
+                        .as(cfg.httpServerConfig -> api.httpApp)
+                    }
                   }
-                }
+              }
             }
           }
             .flatMap {

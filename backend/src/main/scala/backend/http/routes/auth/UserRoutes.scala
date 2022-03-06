@@ -1,14 +1,18 @@
 package backend.http.routes.auth
 
 import backend.algebras.AuthAlg
-import backend.domain.auth.{CreateUser, UserNameInUse}
+import backend.domain.auth.{CreateUser, UserName, UserNameInUse}
 import backend.ext.http4s.refined.RefinedRequestDecoder
-import backend.domain.tokenEncoder
+import backend.http.routes.auth.UserRoutes.RegistrationResponse
 import cats.MonadThrow
-import cats.syntax.all._
+import backend.domain.jwt._
+import cats.syntax.all.*
+import io.circe.{Encoder, Json, JsonObject}
+import io.circe.Json.{JObject, JString}
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
+import org.http4s.Status.*
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 
@@ -18,14 +22,15 @@ final case class UserRoutes[F[_] : JsonDecoder : MonadThrow](
 
   private[routes] val prefixPath = "/auth"
 
+
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
 
     case req@POST -> Root / "users" =>
       req
         .decodeR[CreateUser] { user =>
           auth
-            .newUser(user.username.toDomain, user.password.toDomain)
-            .flatMap(Created(_))
+            .newUser(user.username.toDomain, user.email.toDomain, user.password.toDomain)
+            .flatMap(jwt => Created(RegistrationResponse(jwt, user.username.toDomain)))
             .recoverWith {
               case UserNameInUse(u) => Conflict(u.show)
             }
@@ -37,4 +42,22 @@ final case class UserRoutes[F[_] : JsonDecoder : MonadThrow](
     prefixPath -> httpRoutes
   )
 
+}
+
+object UserRoutes {
+  final case class RegistrationResponse(
+                                         token: JwtToken,
+                                         username: UserName
+                                       )
+
+  implicit val encoder: Encoder[RegistrationResponse] = Encoder.instance { rr =>
+    import io.circe.syntax.*
+    Json.fromFields(List(
+      "user" -> Json.fromFields(List(
+        "username" -> rr.username.value.asJson,
+        "token" -> rr.token.value.asJson
+      )))
+    )
+
+  }
 }

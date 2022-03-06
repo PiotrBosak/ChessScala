@@ -1,6 +1,7 @@
 package chesslogic.rules
 
-import chesslogic.{Black, Color, White}
+import chesslogic.Color
+import chesslogic.Color.*
 import chesslogic.board.{Board, Move, Position, Tile}
 import chesslogic.pieces.Pawn
 

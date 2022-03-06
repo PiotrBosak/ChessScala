@@ -1,12 +1,12 @@
 package chesslogic.rules
 
-import chesslogic.White
+import chesslogic.Color.*
 import chesslogic.board.Position
 import chesslogic.game.FullGame
 import chesslogic.rules.CheckAndMateRules.{isKingChecked, isKingMated}
 import org.scalatest.flatspec.AnyFlatSpec
 
-class CheckAndMateRulesTest extends AnyFlatSpec{
+class CheckAndMateRulesTest extends AnyFlatSpec {
   private val game = FullGame()
   "White king" should "be checked after black queen on A5" in {
     val afterWhitePawn = game.makeMoveWithoutTurn(Position(2,4),Position(4,4)).get

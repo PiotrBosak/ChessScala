@@ -1,10 +1,10 @@
 package chesslogic.pieces
 
 import chesslogic.Color
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
 
-@derive(encoder,decoder)
+
+
+
 sealed trait Piece{
   val color:Color
 }

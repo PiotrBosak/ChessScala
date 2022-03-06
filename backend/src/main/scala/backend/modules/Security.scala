@@ -1,20 +1,22 @@
 package backend.modules
 
-import backend.auth._
-import backend.config.types._
-import backend.domain.auth._
-import backend.http.auth.users._
-import backend.algebras._
-
-import cats.ApplicativeThrow
-import cats.effect._
-import cats.syntax.all._
-import dev.profunktor.auth.jwt._
+import backend.auth.*
+import backend.config.types.*
+import backend.domain.jwt.*
+import backend.domain.auth.*
+import backend.http.auth.users.*
+import backend.algebras.*
+import cats.{Applicative, ApplicativeThrow}
+import cats.effect.*
+import cats.syntax.all.*
 import dev.profunktor.redis4cats.RedisCommands
-import eu.timepit.refined.auto._
-import io.circe.parser.{ decode => jsonDecode }
-import pdi.jwt._
+import eu.timepit.refined.auto.*
+import io.circe.parser.decode as jsonDecode
+import pdi.jwt.*
+import backend.http.jwt.jwt._
 import skunk.Session
+
+import java.util.UUID
 object Security {
   def make[F[_]: Sync](
                         cfg: AppConfig,
@@ -26,7 +28,7 @@ object Security {
       AdminJwtAuth(
         JwtAuth
           .hmac(
-            cfg.adminJwtConfig.secretKey.value.secret,
+            cfg.adminJwtConfig.secretKey.value.value,
             JwtAlgorithm.HS256
           )
       )
@@ -35,24 +37,27 @@ object Security {
       UserJwtAuth(
         JwtAuth
           .hmac(
-            cfg.tokenConfig.value.secret,
+            cfg.tokenConfig.value.value,
             JwtAlgorithm.HS256
           )
       )
 
-    val adminToken = JwtToken(cfg.adminJwtConfig.adminToken.value.secret)
+    //todo to tez jest raczej zjebane
+    val adminToken = JwtToken(cfg.adminJwtConfig.adminToken.value.value)
 
     for {
       adminClaim <- jwtDecode[F](adminToken, adminJwtAuth.value)
       content    <- ApplicativeThrow[F].fromEither(jsonDecode[ClaimContent](adminClaim.content))
-      adminUser = AdminUser(User(UserId(content.uuid), UserName("admin")))
+      //todo fix
+      _ <- Applicative[F].unit
+      adminUser = AdminUser(User(UserId(UUID.randomUUID()), UserName("admin"),Email("admin@myChessMail.com")))
       tokens <- JwtExpire.make[F].map(Tokens.make[F](_, cfg.tokenConfig.value, cfg.tokenExpiration))
       crypto <- Crypto.make[F](cfg.passwordSalt.value)
       users     = UserAlg.make[F](postgres)
       auth      = AuthAlg.make[F](cfg.tokenExpiration, tokens, users, redis, crypto)
       adminAuth = UsersAuth.admin[F](adminToken, adminUser)
       usersAuth = UsersAuth.common[F](redis)
-    } yield new Security[F](auth, adminAuth, usersAuth, adminJwtAuth, userJwtAuth) {}
+    } yield new Security[F](auth, adminAuth, usersAuth,adminJwtAuth, userJwtAuth) {}
 
   }
 }

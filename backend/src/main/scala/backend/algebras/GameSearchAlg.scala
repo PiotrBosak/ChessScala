@@ -2,11 +2,11 @@ package backend.algebras
 
 import backend.domain.auth.UserId
 import backend.domain.game.GameId
-import backend.domain.gamesearch._
+import backend.domain.gamesearch.*
 import cats.{Applicative, Monad, MonadThrow}
 import cats.effect.std.Queue
-import cats.syntax.all._
-import io.circe.syntax._
+import cats.syntax.all.*
+import io.circe.syntax.*
 import cats.effect.kernel.{Concurrent, Ref, Resource}
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
@@ -18,7 +18,7 @@ trait GameSearchAlg[F[_]] {
 
   def startSearch(userId: UserId): F[StartSearchResult]
 
-  def poke(userId: UserId): F[PokeResult]
+  def poll(userId: UserId): F[PokeResult]
 
   def stopSearching(userId: UserId): F[StopSearchResult]
 
@@ -29,6 +29,8 @@ object GameSearchAlg {
                          queue: Queue[F, UserId],
                          cancellations: Ref[F, List[UserId]],
                         ): GameSearchAlg[F] = new GameSearchAlg[F] {
+    import StartSearchResult._
+    import StopSearchResult._
     override def startSearch(userId: UserId): F[StartSearchResult] =
       redis.get(userId.asJson.noSpaces).flatMap {
         case Some(_) =>
@@ -37,10 +39,21 @@ object GameSearchAlg {
           queue.offer(userId).as(SearchStartSuccessful)
       }
 
-    override def poke(userId: UserId): F[PokeResult] =
-      redis.get(userId.asJson.noSpaces).flatMap {
+    override def poll(userId: UserId): F[PokeResult] =
+      redis.get(userId.asJson.noSpaces)
+        .attemptTap {
+          case Left(value) =>
+            println("left")
+            Applicative[F].unit
+          case Right(value) =>
+            println("right")
+            Applicative[F].unit
+        }
+
+        .flatMap {
         case Some(gameId) =>
-          Json.fromString(gameId).as[GameId].liftTo[F].map { gameId =>
+          Json.fromString(gameId)
+            .as[GameId].liftTo[F].map { gameId =>
             GameFound(gameId)
           }
         case None =>

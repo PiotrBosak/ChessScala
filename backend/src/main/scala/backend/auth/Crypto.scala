@@ -6,11 +6,11 @@ import javax.crypto.spec.{ IvParameterSpec, PBEKeySpec, SecretKeySpec }
 import javax.crypto.{ Cipher, SecretKeyFactory }
 
 import backend.config.types.PasswordSalt
-import backend.domain.auth._
+import backend.domain.auth.*
 
 import cats.effect.Sync
-import cats.syntax.all._
-import eu.timepit.refined.auto._
+import cats.syntax.all.*
+import eu.timepit.refined.auto.*
 
 trait Crypto {
   def encrypt(value: Password): EncryptedPassword
@@ -25,7 +25,7 @@ object Crypto {
         val ivBytes = new Array[Byte](16)
         random.nextBytes(ivBytes)
         val iv       = new IvParameterSpec(ivBytes);
-        val salt     = passwordSalt.secret.value.getBytes("UTF-8")
+        val salt     = passwordSalt.value.getBytes("UTF-8")
         val keySpec  = new PBEKeySpec("password".toCharArray(), salt, 65536, 256)
         val factory  = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
         val bytes    = factory.generateSecret(keySpec).getEncoded

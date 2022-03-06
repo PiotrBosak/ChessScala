@@ -1,17 +1,18 @@
 package backend.algebras
 
 import backend.domain.auth.UserId
-import backend.domain.game.{DrawProposal, DrawProposalAnswer, DrawProposalAnswerResult, ForfeitResult, GameId, GameNotFound, IllegalMove, Move, MoveResult, MoveSuccessful, PvPGame}
+import backend.domain.game.{DrawProposal, DrawProposalAnswer, DrawProposalAnswerResult, ForfeitResult, GameId,  Move, MoveResult,  PvPGame}
 import cats.{Applicative, MonadThrow}
 import cats.effect.Temporal
 import cats.effect.kernel.Resource
 import chesslogic.board.Board
-import io.circe.syntax._
-import cats.syntax.all._
+import io.circe.syntax.*
+import cats.syntax.all.*
 import chesslogic.game.{BlackPlayer, Player, WhitePlayer}
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import skunk.Session
+import MoveResult.*
 
 trait GameAlg[F[_]] {
 

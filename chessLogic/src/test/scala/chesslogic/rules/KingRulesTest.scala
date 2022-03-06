@@ -1,6 +1,6 @@
 package chesslogic.rules
 
-import chesslogic.White
+import chesslogic.Color.*
 import chesslogic.board.Position
 import chesslogic.game.FullGame
 import chesslogic.pieces.Rook

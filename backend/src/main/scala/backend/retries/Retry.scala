@@ -1,10 +1,10 @@
 package backend.retries
 
+import io.odin.Logger
 import cats.effect.Temporal
-import cats.syntax.show._
-import org.typelevel.log4cats.Logger
-import retry.RetryDetails._
-import retry._
+import cats.syntax.show.*
+import retry.RetryDetails.*
+import retry.*
 
 trait Retry[F[_]] {
   def retry[A](policy: RetryPolicy[F], retriable: Retriable)(fa: F[A]): F[A]

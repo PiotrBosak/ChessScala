@@ -52,7 +52,7 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
   def getBoardAfterMove(moveType: MoveType, tileFrom: Tile, tileTo: Tile, board: Board): Option[Board] =
     tileFrom.currentPiece
       .map(piece => {
-        println("zzzzzzzzzzzzzzz")
+        ("zzzzzzzzzzzzzzz")
         (
           piece, moveType match
             case Castling => makeCastlingMove(tileFrom, tileTo)
@@ -80,7 +80,7 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
   }
 
   private def makeLePassant(tileFrom: Tile, tileTo: Tile, piece: Piece, board: Board): Board = {
-    println("XXXXXXXXx3")
+    ("XXXXXXXXx3")
     val attackingColor = tileFrom.currentPiece.get.color
     val difference     = if (attackingColor == White) 1 else -1
     val newTileFrom    = tileFrom.copy(currentPiece = None, hasMoved = true)
@@ -88,8 +88,8 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
     val capturedPawntile =
       board.getTile(tileTo.position.copy(rank = Rank.fromIntUnsafe(tileTo.position.rank.toNumber - difference)))
     val newTileAfterCapturing = capturedPawntile.copy(currentPiece = None)
-    println("YYYYYYYYYY")
-    println(s"$newTileAfterCapturing")
+    ("YYYYYYYYYY")
+    (s"$newTileAfterCapturing")
     val newMove = Move(tileFrom.position, newTileTo.position, LePassant)
     updateBoard(newTileFrom, newMove)
       .updateBoard(newTileTo, newMove)
@@ -128,7 +128,7 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
   }
 
   private def makeNormalMove(tileFrom: Tile, tileTo: Tile, pieceMoving: Piece): Board =
-    println("XXXXXXXXx2")
+    ("XXXXXXXXx2")
     val newTileFrom = tileFrom.copy(currentPiece = None, hasMoved = true)
     val newTileTo   = tileTo.copy(currentPiece = Some(pieceMoving), hasMoved = true)
     val newMove     = Move(tileFrom.position, newTileTo.position, Normal)

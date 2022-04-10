@@ -46,19 +46,19 @@ object GameSearchAlg {
       redis.get(userId.asRedis)
         .attemptTap {
           case Left(value) =>
-            println("left")
+            ("left")
             Applicative[F].unit
           case Right(value) =>
-            println("right")
+            ("right")
             Applicative[F].unit
         }
 
         .flatMap {
         case Some(gameId) =>
-          println(Try(Json.fromString(gameId.show).as[UUID]))
+          (Try(Json.fromString(gameId.show).as[UUID]))
           Json.fromString(gameId)
             .as[GameId].liftTo[F].map { gameId =>
-            println("found game")
+            ("found game")
             GameFound(gameId)
           }
         case None =>

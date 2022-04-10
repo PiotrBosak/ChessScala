@@ -48,10 +48,10 @@ object PawnRules extends MovingRules[Pawn] {
       piece <- tile.currentPiece
       attackingColor = piece.color
       lastMove <- board.previousMove
-      _ = println(s"before checking, previous move was: $lastMove")
+      _ = (s"before checking, previous move was: $lastMove")
       positionToLeft <- position.file.advance(difference).map(file => position.copy(file = file))
       if checkTileForLePassant(lastMove, attackingColor, positionToLeft, board)
-      _ = println("Checking successful")
+      _ = ("Checking successful")
       rankDifference = if (attackingColor == White) 1 else -1
       positionToMove <- positionToLeft.rank.advance(rankDifference).map(rank => positionToLeft.copy(rank = rank))
     } yield positionToMove
@@ -72,10 +72,10 @@ object PawnRules extends MovingRules[Pawn] {
       case Some(piece: Pawn) => piece.color != attackingColor
       case _                 => false
     }
-    println(isRowTheSame)
-    println(isPreviousStartCorrect)
-    println("enemy pawn" + isEnemyPawn)
-    println(isColumnTheSame)
+    (isRowTheSame)
+    (isPreviousStartCorrect)
+    ("enemy pawn" + isEnemyPawn)
+    (isColumnTheSame)
     isRowTheSame && isPreviousStartCorrect && isEnemyPawn && isColumnTheSame
 
   }

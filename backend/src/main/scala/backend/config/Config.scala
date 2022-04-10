@@ -1,7 +1,7 @@
 package backend.config
 
 import ciris.*
-import backend.domain.{*, given}
+import backend.domain.{ given, * }
 import com.comcast.ip4s.*
 
 import scala.concurrent.duration.*
@@ -19,22 +19,21 @@ import org.tpolecat.typename.TypeName
 
 object Config {
 
-
   given cirisConfigDecoder: ConfigDecoder[String, AppEnvironment] =
     ConfigDecoder[String].mapOption("AppEnvironment") { s =>
       s.toLowerCase match
         case "test" => Some(Test)
         case "prod" => Some(Prod)
-        case _ => None
+        case _      => None
     }
 
-  def load[F[_] : Async]: F[AppConfig] =
+  def load[F[_]: Async]: F[AppConfig] =
     env("SC_APP_ENV")
       .as[AppEnvironment]
       .flatMap {
         case Test =>
           default[F](
-            RedisURI("redis://localhost:6379"),
+            RedisURI("redis://localhost:6379")
           )
         case Prod =>
           default[F](
@@ -44,15 +43,15 @@ object Config {
       .load[F]
 
   private def default[F[_]](
-                             redisUri: RedisURI,
-                           ): ConfigValue[F, AppConfig] =
+      redisUri: RedisURI
+  ): ConfigValue[F, AppConfig] =
     (
       env("SC_JWT_SECRET_KEY").as[JwtSecretKeyConfig].secret,
       env("SC_JWT_CLAIM").as[JwtClaimConfig].secret,
       env("SC_ACCESS_TOKEN_SECRET_KEY").as[JwtAccessTokenKeyConfig].secret,
       env("SC_ADMIN_USER_TOKEN").as[AdminUserTokenConfig].secret,
-      env("SC_PASSWORD_SALT").as[PasswordSalt].secret,
-      ).parMapN { (jwtSecretKey, jwtClaim, tokenKey, adminToken, salt) =>
+      env("SC_PASSWORD_SALT").as[PasswordSalt].secret
+    ).parMapN { (jwtSecretKey, jwtClaim, tokenKey, adminToken, salt) =>
       AppConfig(
         AdminJwtConfig(jwtSecretKey, jwtClaim, adminToken),
         tokenKey,

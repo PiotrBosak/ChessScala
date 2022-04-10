@@ -6,4 +6,3 @@ enum AppEnvironment derives Codec.AsObject {
   case Test
   case Prod
 }
-

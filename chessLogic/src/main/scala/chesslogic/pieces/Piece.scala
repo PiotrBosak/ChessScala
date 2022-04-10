@@ -13,4 +13,3 @@ object Piece {
   final case class Queen(override val color: Color)  extends Piece
   final case class King(override val color: Color)   extends Piece
 }
-

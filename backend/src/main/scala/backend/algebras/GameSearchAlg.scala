@@ -3,15 +3,15 @@ package backend.algebras
 import backend.domain.auth.UserId
 import backend.domain.game.GameId
 import backend.domain.gamesearch.PokeResult.*
-import cats.{Applicative, Monad, MonadThrow}
+import cats.{ Applicative, Monad, MonadThrow }
 import cats.effect.std.Queue
 import cats.syntax.all.*
 import io.circe.syntax.*
-import cats.effect.kernel.{Concurrent, Ref, Resource}
+import cats.effect.kernel.{ Concurrent, Ref, Resource }
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import backend.domain.RedisEncodeExt.asRedis
-import backend.domain.gamesearch.{PokeResult, StartSearchResult, StopSearchResult}
+import backend.domain.gamesearch.{ PokeResult, StartSearchResult, StopSearchResult }
 import skunk.Session
 
 import java.util.UUID
@@ -28,10 +28,11 @@ trait GameSearchAlg[F[_]] {
 }
 
 object GameSearchAlg {
-  def make[F[_] : MonadThrow](redis: RedisCommands[F, String, String],
-                         queue: Queue[F, UserId],
-                         cancellations: Ref[F, List[UserId]],
-                        ): GameSearchAlg[F] = new GameSearchAlg[F] {
+  def make[F[_]: MonadThrow](
+      redis: RedisCommands[F, String, String],
+      queue: Queue[F, UserId],
+      cancellations: Ref[F, List[UserId]]
+  ): GameSearchAlg[F] = new GameSearchAlg[F] {
     import StartSearchResult._
     import StopSearchResult._
     override def startSearch(userId: UserId): F[StartSearchResult] =
@@ -43,27 +44,27 @@ object GameSearchAlg {
       }
 
     override def poll(userId: UserId): F[PokeResult] =
-      redis.get(userId.asRedis)
+      redis
+        .get(userId.asRedis)
         .attemptTap {
           case Left(value) =>
-            ("left")
             Applicative[F].unit
           case Right(value) =>
-            ("right")
             Applicative[F].unit
         }
-
         .flatMap {
-        case Some(gameId) =>
-          (Try(Json.fromString(gameId.show).as[UUID]))
-          Json.fromString(gameId)
-            .as[GameId].liftTo[F].map { gameId =>
-            ("found game")
-            GameFound(gameId)
-          }
-        case None =>
-          Applicative[F].pure(GameNotFoundYet)
-      }
+          case Some(gameId) =>
+            (Try(Json.fromString(gameId.show).as[UUID]))
+            Json
+              .fromString(gameId)
+              .as[GameId]
+              .liftTo[F]
+              .map { gameId =>
+                GameFound(gameId)
+              }
+          case None =>
+            Applicative[F].pure(GameNotFoundYet)
+        }
 
     override def stopSearching(userId: UserId): F[StopSearchResult] =
       redis.get(userId.asRedis).flatMap {

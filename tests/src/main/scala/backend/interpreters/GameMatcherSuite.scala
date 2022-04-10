@@ -7,7 +7,6 @@ import io.odin.Logger
 
 object GameMatcherSuite extends SimpleIOSuite with Checkers {
 
-  given lg:Logger[IO] = Logger.noop
-
+  given lg: Logger[IO] = Logger.noop
 
 }

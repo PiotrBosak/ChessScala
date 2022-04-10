@@ -1,25 +1,25 @@
 package backend.domain
 
 import java.util.UUID
-import backend.{IsUUID, Wrapper}
+import backend.{ IsUUID, Wrapper }
 
 import scala.language.adhocExtensions
 import cats.implicits._
 import backend.domain.OrphanInstances.given
-import cats.{Eq, Order, Show}
-import ciris.{ConfigDecoder, ConfigValue}
-import eu.timepit.refined.api.{Refined, RefinedType, RefinedTypeOps}
-import io.circe.{Decoder, Encoder}
+import cats.{ Eq, Order, Show }
+import ciris.{ ConfigDecoder, ConfigValue }
+import eu.timepit.refined.api.{ Refined, RefinedType, RefinedTypeOps }
+import io.circe.{ Decoder, Encoder }
 import monocle.Iso
 
 abstract class Newtype[A](using
-                          eqv: Eq[A],
-                          ord: Order[A],
-                          shw: Show[A],
-                          enc: Encoder[A],
-                          dec: Decoder[A],
-                          cfg: ConfigDecoder[String, A]
-                         ):
+    eqv: Eq[A],
+    ord: Order[A],
+    shw: Show[A],
+    enc: Encoder[A],
+    dec: Decoder[A],
+    cfg: ConfigDecoder[String, A]
+):
   opaque type Type = A
 
   inline def apply(a: A): Type = a
@@ -45,27 +45,27 @@ abstract class IdNewtype extends Newtype[UUID]:
   def unsafeFrom(str: String): Type = apply(UUID.fromString(str))
 
 abstract class RefNewtype[T, RT](using
-                                 eqv: Eq[RT],
-                                 ord: Order[RT],
-                                 shw: Show[RT],
-                                 enc: Encoder[RT],
-                                 dec: Decoder[RT],
-                                 cfg: ConfigDecoder[String, RT],
-                                 rt: RefinedType.AuxT[RT, T]
-                                ) extends Newtype[RT]:
+    eqv: Eq[RT],
+    ord: Order[RT],
+    shw: Show[RT],
+    enc: Encoder[RT],
+    dec: Decoder[RT],
+    cfg: ConfigDecoder[String, RT],
+    rt: RefinedType.AuxT[RT, T]
+) extends Newtype[RT]:
   object Ops extends RefinedTypeOps[RT, T]
   def from(t: T): Either[String, Type] = Ops.from(t).map(apply(_))
   def unsafeFrom(t: T): Type           = apply(Ops.unsafeFrom(t))
 
 abstract class NumNewtype[A](using
-                             eqv: Eq[A],
-                             ord: Order[A],
-                             shw: Show[A],
-                             enc: Encoder[A],
-                             dec: Decoder[A],
-                             cfg: ConfigDecoder[String, A],
-                             num: Numeric[A]
-                            ) extends Newtype[A]:
+    eqv: Eq[A],
+    ord: Order[A],
+    shw: Show[A],
+    enc: Encoder[A],
+    dec: Decoder[A],
+    cfg: ConfigDecoder[String, A],
+    num: Numeric[A]
+) extends Newtype[A]:
 
   extension (x: Type)
     inline def -[T](using inv: T =:= Type)(y: T): Type = apply(num.minus(x.value, inv.apply(y).value))

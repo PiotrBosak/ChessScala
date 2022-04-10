@@ -18,10 +18,10 @@ case class FullGame(gameHistory: NonEmptyList[Board] = NonEmptyList.one(Board())
     val currentBoard        = gameHistory.head
     val possibleMovesOption = currentBoard.getPossibleMoves(from)
     for {
-      possibleMoves <- possibleMovesOption
+      possibleMoves   <- possibleMovesOption
       (moveType, pos) <- possibleMoves.find(p => p._2 == to)
-      tileToMove    = currentBoard.getTile(to)
-      tileFrom       = currentBoard.getTile(from)
+      tileToMove = currentBoard.getTile(to)
+      tileFrom   = currentBoard.getTile(from)
       attackingPiece <- tileFrom.currentPiece
       isColorCorrect = if (attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
       newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard) if isColorCorrect
@@ -32,10 +32,10 @@ case class FullGame(gameHistory: NonEmptyList[Board] = NonEmptyList.one(Board())
     val currentBoard        = gameHistory.head
     val possibleMovesOption = currentBoard.getPossibleMoves(from)
     for {
-      possibleMoves <- possibleMovesOption
+      possibleMoves   <- possibleMovesOption
       (moveType, pos) <- possibleMoves.find(p => p._2 == to)
-      tileToMove    = currentBoard.getTile(to)
-      tileFrom      = currentBoard.getTile(from)
+      tileToMove = currentBoard.getTile(to)
+      tileFrom   = currentBoard.getTile(from)
       newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard)
     } yield FullGame(newBoard :: this.gameHistory, turn = turn.changeTurn)
 

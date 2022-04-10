@@ -19,9 +19,9 @@ trait UserAlg[F[_]] {
 }
 
 object UserAlg {
-  def make[F[_] : GenUUID : MonadCancelThrow](
-                                               postgres: Resource[F, Session[F]]
-                                             ): UserAlg[F] =
+  def make[F[_]: GenUUID: MonadCancelThrow](
+      postgres: Resource[F, Session[F]]
+  ): UserAlg[F] =
     new UserAlg[F] {
 
       import UserSQL.*
@@ -31,7 +31,7 @@ object UserAlg {
           session.prepare(selectUser).use { q =>
             q.option(username).map {
               case Some(u ~ p) => UserWithPassword(u.id, u.name, u.email, p).some
-              case _ => none[UserWithPassword]
+              case _           => none[UserWithPassword]
             }
           }
         }
@@ -43,9 +43,8 @@ object UserAlg {
               cmd
                 .execute(User(id, username, email) ~ password)
                 .as(id)
-                .recoverWith {
-                  case SqlState.UniqueViolation(_) =>
-                    UserNameInUse(username).raiseError[F, UserId]
+                .recoverWith { case SqlState.UniqueViolation(_) =>
+                  UserNameInUse(username).raiseError[F, UserId]
                 }
             }
           }
@@ -57,12 +56,10 @@ object UserAlg {
 private object UserSQL {
 
   val codec: Codec[User ~ EncryptedPassword] =
-    (userId ~ userName ~ email ~ encPassword).imap {
-      case i ~ n ~ e ~ p =>
-        User(i, n, e) ~ p
-    } {
-      case u ~ p =>
-        u.id ~ u.name ~ u.email ~ p
+    (userId ~ userName ~ email ~ encPassword).imap { case i ~ n ~ e ~ p =>
+      User(i, n, e) ~ p
+    } { case u ~ p =>
+      u.id ~ u.name ~ u.email ~ p
     }
 
   val selectUser: Query[UserName, User ~ EncryptedPassword] =

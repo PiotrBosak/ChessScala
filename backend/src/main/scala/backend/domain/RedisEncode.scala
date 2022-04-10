@@ -6,7 +6,6 @@ import io.circe.syntax.*
 trait RedisEncode[A]:
   def redisEncode(a: A): String
 
-
 object RedisEncode:
   def apply[A: RedisEncode]: RedisEncode[A] = summon
 
@@ -25,4 +24,4 @@ object RedisEncodeExt:
 
   import RedisEncodeExt._
 
-  extension[A: RedisEncode] (a: A) def asRedis: String = RedisEncode[A].redisEncode(a)
+  extension [A: RedisEncode](a: A) def asRedis: String = RedisEncode[A].redisEncode(a)

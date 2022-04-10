@@ -16,6 +16,7 @@ case class Tile(position: Position, currentPiece: Option[Piece], hasMoved: Boole
   val color: Color =
     if ((position.file.toNumber + position.rank.toNumber) % 2 == 0) White
     else Black
+  println("Helo")
 
   def isPieceColorDifferent(another: Option[Tile]): Boolean =
     another.isDefined && another.get.currentPiece.isDefined && another.get.currentPiece.get.color != this.color

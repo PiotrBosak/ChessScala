@@ -1,12 +1,9 @@
 package backend.domain
 
-
-
-import io.circe.{Encoder,Codec}
+import io.circe.{ Codec, Encoder }
 import monocle.Iso
 
 object healthcheck {
-
 
   sealed trait Status
   object Status {
@@ -23,14 +20,9 @@ object healthcheck {
       Encoder.forProduct1("status")(_.toString)
   }
 
-
-
   case class RedisStatus(value: Status)
 
-
-
   case class PostgresStatus(value: Status)
-
 
   case class AppStatus(
       redis: RedisStatus,

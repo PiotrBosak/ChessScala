@@ -2,20 +2,20 @@ package backend.http.jwt
 
 import backend.http.jwt.jwt.JwtAuth
 import cats.MonadThrow
-import cats.data.{Kleisli, OptionT}
-import org.http4s.{AuthedRoutes, Request}
+import cats.data.{ Kleisli, OptionT }
+import org.http4s.{ AuthedRoutes, Request }
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.AuthMiddleware
-import backend.domain.jwt.{AuthHeaders, JwtToken}
+import backend.domain.jwt.{ AuthHeaders, JwtToken }
 import cats.syntax.all.*
 import pdi.jwt.JwtClaim
 import pdi.jwt.exceptions.JwtException
 
 object JwtAuthMiddleware {
   def apply[F[_]: MonadThrow, A](
-                                  jwtAuth: JwtAuth,
-                                  authenticate: JwtToken => JwtClaim => F[Option[A]]
-                                ): AuthMiddleware[F, A] = {
+      jwtAuth: JwtAuth,
+      authenticate: JwtToken => JwtClaim => F[Option[A]]
+  ): AuthMiddleware[F, A] = {
     val dsl = new Http4sDsl[F] {}; import dsl._
     import jwt._
 
@@ -28,8 +28,8 @@ object JwtAuthMiddleware {
           jwtDecode[F](token, jwtAuth)
             .flatMap(authenticate(token))
             .map(_.fold("not found".asLeft[A])(_.asRight[String]))
-            .recover {
-              case _: JwtException => "Invalid access token".asLeft[A]
+            .recover { case _: JwtException =>
+              "Invalid access token".asLeft[A]
             }
         }
       }

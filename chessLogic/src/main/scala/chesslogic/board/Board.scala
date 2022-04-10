@@ -38,7 +38,7 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
     possibleMoves = getMovesForPiece(piece, position)
   } yield possibleMoves
 
-  def getMovesForPiece(piece: Piece, position: Position): List[(MoveType,Position)] = {
+  def getMovesForPiece(piece: Piece, position: Position): List[(MoveType, Position)] = {
     piece match {
       case Pawn(_)   => PawnRules.getPossibleMoves(position, this) ++ PawnRules.getPossibleAttacks(position, this)
       case Bishop(_) => BishopRules.getPossibleMoves(position, this) ++ BishopRules.getPossibleAttacks(position, this)
@@ -54,10 +54,11 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
       .map(piece => {
         ("zzzzzzzzzzzzzzz")
         (
-          piece, moveType match
-            case Castling => makeCastlingMove(tileFrom, tileTo)
+          piece,
+          moveType match
+            case Castling  => makeCastlingMove(tileFrom, tileTo)
             case LePassant => makeLePassant(tileFrom, tileTo, piece, board)
-            case _ => makeNormalMove(tileFrom, tileTo, piece)
+            case _         => makeNormalMove(tileFrom, tileTo, piece)
         )
       })
       .filter(tuple => !CheckAndMateRules.isKingChecked(tuple._2, tuple._1.color))

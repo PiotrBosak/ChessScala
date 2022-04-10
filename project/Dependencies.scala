@@ -34,9 +34,9 @@ object Dependencies {
   }
 
   object Libraries {
-    def circe(artifact: String): ModuleID  = "io.circe"                 %% s"circe-$artifact"  % V.circe
-    def http4s(artifact: String): ModuleID = "org.http4s"               %% s"http4s-$artifact" % V.http4s
-    def skunk(artifact: String): ModuleID = "org.tpolecat"              %% s"skunk-$artifact"  % V.skunk
+    def circe(artifact: String): ModuleID    = "io.circe"             %% s"circe-$artifact"  % V.circe
+    def http4s(artifact: String): ModuleID   = "org.http4s"           %% s"http4s-$artifact" % V.http4s
+    def skunk(artifact: String): ModuleID    = "org.tpolecat"         %% s"skunk-$artifact"  % V.skunk
     def jwtScala(artifact: String): ModuleID = "com.github.jwt-scala" %% s"jwt-$artifact"    % V.jwtScala
 
     val cats       = "org.typelevel"    %% "cats-core"   % V.cats
@@ -62,8 +62,6 @@ object Dependencies {
     val http4sCirce   = http4s("circe")
     val http4sMetrics = http4s("prometheus-metrics")
 
-
-
     val natchezCore      = "org.tpolecat" %% "natchez-core"      % V.natchez
     val natchezHoneycomb = "org.tpolecat" %% "natchez-honeycomb" % V.natchez
     val natchezHttp4s    = "org.tpolecat" %% "natchez-http4s"    % V.natchezHttp4s
@@ -78,8 +76,8 @@ object Dependencies {
     val refinedCore = "eu.timepit" %% "refined"      % V.refined
     val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
 
-    val slf4j = "org.slf4j" % "slf4j-simple" % V.slf4j
-    val squants = "org.typelevel"  %% "squants"      % V.squants
+    val slf4j   = "org.slf4j"      % "slf4j-simple" % V.slf4j
+    val squants = "org.typelevel" %% "squants"      % V.squants
 
     // test
     val monocleLaw       = "dev.optics"          %% "monocle-law"       % V.monocle

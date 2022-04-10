@@ -1,7 +1,7 @@
 package backend.resources
 
 import backend.config.types.HttpClientConfig
-import cats.effect.kernel.{Async, Resource}
+import cats.effect.kernel.{ Async, Resource }
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 

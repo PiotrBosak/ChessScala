@@ -27,8 +27,8 @@ enum Rank:
     case Rank.Six   => 6
     case Rank.Seven => 7
     case Rank.Eight => 8
-    
-  def advanceUnsafe(n: Int): Rank = Rank.fromIntUnsafe(toNumber + n)
+
+  def advanceUnsafe(n: Int): Rank   = Rank.fromIntUnsafe(toNumber + n)
   def advance(n: Int): Option[Rank] = Try(Rank.fromIntUnsafe(toNumber + n)).toOption
 end Rank
 
@@ -63,8 +63,8 @@ enum File:
     case File.F => 6
     case File.G => 7
     case File.H => 8
-    
-  def advanceUnsafe(n: Int): File = File.fromIntUnsafe(toNumber + n)
+
+  def advanceUnsafe(n: Int): File   = File.fromIntUnsafe(toNumber + n)
   def advance(n: Int): Option[File] = Try(File.fromIntUnsafe(toNumber + n)).toOption
 
 end File

@@ -16,7 +16,6 @@ object auth {
   type UserName = UserName.Type
   object UserName extends Newtype[String]
 
-
   type Password = Password.Type
   object Password extends Newtype[String]
 
@@ -36,9 +35,6 @@ object auth {
 
   // --------- user registration -----------
 
-
-
-
   type UserNameParam = UserNameParam.Type
   object UserNameParam extends Newtype[String]
   object UserNameParamExtensions {
@@ -55,7 +51,6 @@ object auth {
     }
   }
 
-
   type PasswordParam = PasswordParam.Type
   object PasswordParam extends Newtype[String]
   object PasswordParamExtensions {
@@ -63,7 +58,6 @@ object auth {
       def toDomain: Password = Password(password.value)
     }
   }
-
 
   case class CreateUser(
       username: UserNameParam,
@@ -80,14 +74,12 @@ object auth {
 
   // --------- user login -----------
 
-
   case class LoginUser(
       username: UserNameParam,
       password: PasswordParam
   ) derives Codec.AsObject
 
   // --------- admin auth -----------
-
 
   case class ClaimContent(uuid: UUID)
 

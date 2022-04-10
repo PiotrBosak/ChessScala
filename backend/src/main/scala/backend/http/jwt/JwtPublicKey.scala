@@ -7,16 +7,14 @@ import java.security.spec.{ PKCS8EncodedKeySpec, X509EncodedKeySpec }
 import pdi.jwt.algorithms._
 import pdi.jwt.{ JwtBase64, JwtUtils }
 
-
-
 final case class PKCS8(value: String) extends AnyVal
 final case class JwtPrivateKey(key: PrivateKey, algorithm: JwtAsymmetricAlgorithm)
 
 object JwtPrivateKey {
   def make[F[_]: ApplicativeThrow](
-                                    privateKey: PKCS8,
-                                    algorithm: JwtAsymmetricAlgorithm
-                                  ): F[JwtPrivateKey] = {
+      privateKey: PKCS8,
+      algorithm: JwtAsymmetricAlgorithm
+  ): F[JwtPrivateKey] = {
     val parsedPrivateKey = algorithm match {
       case _: JwtRSAAlgorithm   => ParserKey.parsePrivateKey[F](privateKey.value, JwtUtils.RSA)
       case _: JwtECDSAAlgorithm => ParserKey.parsePrivateKey[F](privateKey.value, JwtUtils.ECDSA)
@@ -31,22 +29,22 @@ final case class JwtPublicKey(key: PublicKey, algorithm: Seq[JwtAsymmetricAlgori
 object JwtPublicKey {
 
   def rsa[F[_]: ApplicativeThrow](
-                                   publicKey: String,
-                                   algorithms: Seq[JwtRSAAlgorithm]
-                                 ): F[JwtPublicKey] =
+      publicKey: String,
+      algorithms: Seq[JwtRSAAlgorithm]
+  ): F[JwtPublicKey] =
     build[F](publicKey, algorithms, JwtUtils.RSA)
 
   def ecdsa[F[_]: ApplicativeThrow](
-                                     publicKey: String,
-                                     algorithms: Seq[JwtECDSAAlgorithm]
-                                   ): F[JwtPublicKey] =
+      publicKey: String,
+      algorithms: Seq[JwtECDSAAlgorithm]
+  ): F[JwtPublicKey] =
     build[F](publicKey, algorithms, JwtUtils.ECDSA)
 
   private def build[F[_]: ApplicativeThrow](
-                                             publicKey: String,
-                                             algorithms: Seq[JwtAsymmetricAlgorithm],
-                                             keyAlgo: String
-                                           ): F[JwtPublicKey] =
+      publicKey: String,
+      algorithms: Seq[JwtAsymmetricAlgorithm],
+      keyAlgo: String
+  ): F[JwtPublicKey] =
     ParserKey.parsePublicKey[F](publicKey, keyAlgo).map(key => JwtPublicKey(key, algorithms))
 }
 

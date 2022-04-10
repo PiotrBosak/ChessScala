@@ -6,7 +6,7 @@ import backend.domain.jwt.*
 import backend.domain.auth.*
 import backend.http.auth.users.*
 import backend.algebras.*
-import cats.{Applicative, ApplicativeThrow}
+import cats.{ Applicative, ApplicativeThrow }
 import cats.effect.*
 import cats.syntax.all.*
 import dev.profunktor.redis4cats.RedisCommands
@@ -19,10 +19,10 @@ import skunk.Session
 import java.util.UUID
 object Security {
   def make[F[_]: Sync](
-                        cfg: AppConfig,
-                        postgres: Resource[F, Session[F]],
-                        redis: RedisCommands[F, String, String]
-                      ): F[Security[F]] = {
+      cfg: AppConfig,
+      postgres: Resource[F, Session[F]],
+      redis: RedisCommands[F, String, String]
+  ): F[Security[F]] = {
 
     val adminJwtAuth: AdminJwtAuth =
       AdminJwtAuth(
@@ -50,22 +50,22 @@ object Security {
       content    <- ApplicativeThrow[F].fromEither(jsonDecode[ClaimContent](adminClaim.content))
       //todo fix
       _ <- Applicative[F].unit
-      adminUser = AdminUser(User(UserId(UUID.randomUUID()), UserName("admin"),Email("admin@myChessMail.com")))
+      adminUser = AdminUser(User(UserId(UUID.randomUUID()), UserName("admin"), Email("admin@myChessMail.com")))
       tokens <- JwtExpire.make[F].map(Tokens.make[F](_, cfg.tokenConfig.value, cfg.tokenExpiration))
       crypto <- Crypto.make[F](cfg.passwordSalt.value)
       users     = UserAlg.make[F](postgres)
       auth      = AuthAlg.make[F](cfg.tokenExpiration, tokens, users, redis, crypto)
       adminAuth = UsersAuth.admin[F](adminToken, adminUser)
       usersAuth = UsersAuth.common[F](redis)
-    } yield new Security[F](auth, adminAuth, usersAuth,adminJwtAuth, userJwtAuth) {}
+    } yield new Security[F](auth, adminAuth, usersAuth, adminJwtAuth, userJwtAuth) {}
 
   }
 }
 
 sealed abstract class Security[F[_]] private (
-                                               val auth: AuthAlg[F],
-                                               val adminAuth: UsersAuthAlg[F, AdminUser],
-                                               val usersAuth: UsersAuthAlg[F, CommonUser],
-                                               val adminJwtAuth: AdminJwtAuth,
-                                               val userJwtAuth: UserJwtAuth
-                                             )
+    val auth: AuthAlg[F],
+    val adminAuth: UsersAuthAlg[F, AdminUser],
+    val usersAuth: UsersAuthAlg[F, CommonUser],
+    val adminJwtAuth: AdminJwtAuth,
+    val userJwtAuth: UserJwtAuth
+)

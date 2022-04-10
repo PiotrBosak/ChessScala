@@ -4,14 +4,14 @@ import chesslogic.Color
 import chesslogic.Color.*
 import chesslogic.board.Rank.*
 import chesslogic.board.File.*
-import chesslogic.board.{ Board, Move, Position, Tile, MoveType }
+import chesslogic.board.{ Board, Move, MoveType, Position, Tile }
 import chesslogic.pieces.Piece.*
 import chesslogic.board.MoveType
 import cats.implicits.*
 
 //todo it should be a typeclass, that way it doesn't make much sense
 object PawnRules extends MovingRules[Pawn] {
-  override def getPossibleAttacks(position: Position, board: Board): List[(MoveType,Position)] = {
+  override def getPossibleAttacks(position: Position, board: Board): List[(MoveType, Position)] = {
     List(getLeftAttack(position, board), getRightAttack(position, board), lePassant(position, board))
       .collect { case Some((moveType, position)) => (moveType, position) }
   }
@@ -21,14 +21,14 @@ object PawnRules extends MovingRules[Pawn] {
       .collect { case Some((moveType, tile)) => (moveType, tile.position) }
   }
 
-  private def getRightAttack(position: Position, board: Board): Option[(MoveType,Position)] = {
+  private def getRightAttack(position: Position, board: Board): Option[(MoveType, Position)] = {
     for {
       _ <- Option(())
       tile = board.getTile(position)
       piece           <- tile.currentPiece
       rightAttackTile <- getRightAttackTile(position, board, piece.color)
       attackedPiece   <- rightAttackTile.currentPiece if attackedPiece.color != piece.color
-    } yield (MoveType.Normal,rightAttackTile.position)
+    } yield (MoveType.Normal, rightAttackTile.position)
   }
   private def getRightAttackTile(position: Position, board: Board, color: Color): Option[Tile] =
     color match
@@ -37,21 +37,21 @@ object PawnRules extends MovingRules[Pawn] {
 
   private def lePassant(position: Position, board: Board): Option[(MoveType, Position)] = {
     (lePassantGet(position, board, isLeft = true) orElse lePassantGet(position, board, isLeft = false))
-    .map(p => (MoveType.LePassant, p))
+      .map(p => (MoveType.LePassant, p))
   }
 
   private def lePassantGet(position: Position, board: Board, isLeft: Boolean): Option[Position] = {
     val difference = if (isLeft) -1 else 1
     for {
       _ <- Some(())
-      tile  = board.getTile(position)
+      tile = board.getTile(position)
       piece <- tile.currentPiece
       attackingColor = piece.color
       lastMove <- board.previousMove
       _ = (s"before checking, previous move was: $lastMove")
       positionToLeft <- position.file.advance(difference).map(file => position.copy(file = file))
       if checkTileForLePassant(lastMove, attackingColor, positionToLeft, board)
-      _ = ("Checking successful")
+      _              = ("Checking successful")
       rankDifference = if (attackingColor == White) 1 else -1
       positionToMove <- positionToLeft.rank.advance(rankDifference).map(rank => positionToLeft.copy(rank = rank))
     } yield positionToMove
@@ -80,14 +80,14 @@ object PawnRules extends MovingRules[Pawn] {
 
   }
 
-  private def getLeftAttack(position: Position, board: Board): Option[(MoveType,Position)] = {
+  private def getLeftAttack(position: Position, board: Board): Option[(MoveType, Position)] = {
     for {
       _ <- Option(())
-      tile           = board.getTile(position)
+      tile = board.getTile(position)
       piece          <- tile.currentPiece
       leftAttackTile <- getLeftAttackTile(position, board, piece.color)
       attackedPiece  <- leftAttackTile.currentPiece if attackedPiece.color != piece.color
-    } yield (MoveType.Normal,leftAttackTile.position)
+    } yield (MoveType.Normal, leftAttackTile.position)
   }
   private def getLeftAttackTile(position: Position, board: Board, color: Color): Option[Tile] = {
     color match
@@ -98,7 +98,7 @@ object PawnRules extends MovingRules[Pawn] {
   private def oneTileMove(position: Position, board: Board): Option[(MoveType, Tile)] = {
     for {
       _ <- Option(())
-      tile  = board.getTile(position)
+      tile = board.getTile(position)
       piece <- tile.currentPiece
       color = piece.color
       nextTile <- getNextPawnTile(tile.position, color, board, 1) if nextTile.currentPiece.isEmpty
@@ -108,10 +108,14 @@ object PawnRules extends MovingRules[Pawn] {
 
   private def getNextPawnTile(position: Position, pieceColor: Color, board: Board, amount: Int): Option[Tile] =
     pieceColor match {
-      case White => position.rank.advance(amount)
+      case White =>
+        position.rank
+          .advance(amount)
           .map(rank => position.copy(rank = rank))
           .map(board.getTile(_))
-      case Black => position.rank.advance(-amount)
+      case Black =>
+        position.rank
+          .advance(-amount)
           .map(rank => position.copy(rank = rank))
           .map(board.getTile(_))
     }

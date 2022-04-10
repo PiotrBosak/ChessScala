@@ -20,9 +20,9 @@ trait HealthCheckAlg[F[_]] {
 
 object HealthCheckAlg {
   def make[F[_]: Temporal](
-                            postgres: Resource[F, Session[F]],
-                            redis: RedisCommands[F, String, String]
-                          ): HealthCheckAlg[F] =
+      postgres: Resource[F, Session[F]],
+      redis: RedisCommands[F, String, String]
+  ): HealthCheckAlg[F] =
     new HealthCheckAlg[F] {
 
       val q: Query[Void, Int] =

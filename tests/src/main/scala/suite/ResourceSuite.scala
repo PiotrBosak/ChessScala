@@ -1,9 +1,9 @@
 package suite
 
-import cats.effect.{IO, Resource}
+import cats.effect.{ IO, Resource }
 import cats.implicits.*
 import weaver.IOSuite
-import weaver.scalacheck.{CheckConfig, Checkers}
+import weaver.scalacheck.{ CheckConfig, Checkers }
 
 abstract class ResourceSuite extends IOSuite with Checkers {
   override def checkConfig: CheckConfig = CheckConfig.default.copy(minimumSuccessful = 1)

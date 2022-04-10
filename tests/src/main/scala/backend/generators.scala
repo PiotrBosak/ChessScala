@@ -1,10 +1,10 @@
 package backend
 
 import backend.domain.auth.UserId
-import backend.domain.game.{GameId, PvPGame}
+import backend.domain.game.{ GameId, PvPGame }
 import chesslogic.board.Board
 import chesslogic.game.FullGame.Turn
-import chesslogic.game.FullGame.Turn.{BlackTurn, WhiteTurn}
+import chesslogic.game.FullGame.Turn.{ BlackTurn, WhiteTurn }
 import chesslogic.game.SimpleGame
 import org.scalacheck.Gen
 
@@ -14,9 +14,9 @@ object generators {
 
   val nonEmptyStringGen: Gen[String] =
     Gen
-      .chooseNum(21,40)
+      .chooseNum(21, 40)
       .flatMap { n =>
-        Gen.buildableOfN[String,Char](n, Gen.alphaChar)
+        Gen.buildableOfN[String, Char](n, Gen.alphaChar)
       }
 
   def nesGen[A](f: String => A): Gen[A] =
@@ -32,13 +32,13 @@ object generators {
     Gen.oneOf(List(Board()))
 
   val turnGen: Gen[Turn] =
-    Gen.oneOf(List(WhiteTurn,BlackTurn))
+    Gen.oneOf(List(WhiteTurn, BlackTurn))
 
   val simpleGameGen: Gen[SimpleGame] =
     for {
       board <- boardGen
-      turn <- turnGen
-    } yield SimpleGame(board,turn)
+      turn  <- turnGen
+    } yield SimpleGame(board, turn)
 
   val userIdGen: Gen[UserId] =
     Gen.uuid.map(UserId.apply(_))
@@ -47,9 +47,8 @@ object generators {
     for {
       whitePlayer <- userIdGen
       blackPlayer <- userIdGen
-      gameId <- gameIdGen
-      game <- simpleGameGen
-    } yield PvPGame(whitePlayer,blackPlayer,gameId,game)
-
+      gameId      <- gameIdGen
+      game        <- simpleGameGen
+    } yield PvPGame(whitePlayer, blackPlayer, gameId, game)
 
 }

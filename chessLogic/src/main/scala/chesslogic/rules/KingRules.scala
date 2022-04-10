@@ -1,6 +1,6 @@
 package chesslogic.rules
 
-import chesslogic.board.{ Board, Position, MoveType }
+import chesslogic.board.{ Board, MoveType, Position }
 import chesslogic.pieces.Piece.*
 import chesslogic.board.File.*
 import chesslogic.board.File
@@ -15,10 +15,10 @@ object KingRules extends MovingRules[King] {
     y <- -1 to 1
   } yield (x, y)).distinct.toList
 
-  override def getPossibleMoves(position: Position, board: Board): List[(MoveType,Position)] = {
+  override def getPossibleMoves(position: Position, board: Board): List[(MoveType, Position)] = {
     val castlingMoves =
       List(castlingMove(position, board, isLeftRook = true), castlingMove(position, board, isLeftRook = false))
-        .collect { case Some((moveType,position)) =>
+        .collect { case Some((moveType, position)) =>
           (moveType, position)
         }
 
@@ -33,7 +33,7 @@ object KingRules extends MovingRules[King] {
     val newKingPositionFile = if isLeftRook then B else G
     for {
       _ <- Some(())
-      kingTile = board.getTile(position) if !kingTile.hasMoved
+      kingTile     = board.getTile(position) if !kingTile.hasMoved
       kingPosition = kingTile.position
       rookPosition = Position(rookFile, kingPosition.rank)
       rookTile <- getRookTileOption(kingPosition, board, rookPosition.file)
@@ -59,9 +59,9 @@ object KingRules extends MovingRules[King] {
   private def getRookTileOption(position: Position, board: Board, file: File) =
     for {
       _ <- Some(())
-      tile = board.getTile(position)
+      tile         = board.getTile(position)
       rookPosition = Position(file, tile.position.rank)
-      rookTile = board.getTile(rookPosition) if !rookTile.hasMoved
+      rookTile     = board.getTile(rookPosition) if !rookTile.hasMoved
     } yield rookTile
 
 }

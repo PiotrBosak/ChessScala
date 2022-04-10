@@ -1,12 +1,12 @@
 package backend.resources
 
 import io.odin.Logger
-import backend.config.types.{AppConfig, PostgreSQLConfig, RedisConfig}
+import backend.config.types.{ AppConfig, PostgreSQLConfig, RedisConfig }
 import cats.effect.std.Console
-import cats.effect.{Concurrent, Resource}
+import cats.effect.{ Concurrent, Resource }
 import cats.syntax.all.*
 import dev.profunktor.redis4cats.effect.MkRedis
-import dev.profunktor.redis4cats.{Redis, RedisCommands}
+import dev.profunktor.redis4cats.{ Redis, RedisCommands }
 import eu.timepit.refined.auto.*
 import fs2.io.net.Network
 import natchez.Trace.Implicits.noop

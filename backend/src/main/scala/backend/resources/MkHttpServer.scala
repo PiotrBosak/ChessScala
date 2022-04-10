@@ -2,7 +2,7 @@ package backend.resources
 
 import io.odin.Logger
 import backend.config.types.HttpServerConfig
-import cats.effect.kernel.{Async, Resource}
+import cats.effect.kernel.{ Async, Resource }
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server

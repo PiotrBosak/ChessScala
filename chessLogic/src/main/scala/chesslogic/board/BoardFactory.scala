@@ -69,7 +69,6 @@ case object BoardFactory {
   private def createTileWithWhiteQueen(): (Position, Tile) =
     Position(D, One) -> Tile(Position(D, One), Some(Queen(White)))
 
-
   private def createTilesWithNoPieces(): Map[Position, Tile] = {
     @tailrec
     def aux(row: Int, map: Map[Position, Tile]): Map[Position, Tile] =
@@ -80,22 +79,32 @@ case object BoardFactory {
 
   }
 
-
   private def createTilesWithBlackPawns(): Map[Position, Tile] =
     createTiles(7, Some(Pawn(Black)))
 
   private def createTilesWithWhitePawns(): Map[Position, Tile] =
     createTiles(2, Some(Pawn(White)))
 
-
   private def createTiles(rank: Int, piece: Option[Piece]): Map[Position, Tile] = {
     @tailrec
     def createTilesInColumn(file: Int, map: Map[Position, Tile]): Map[Position, Tile] = {
       if (file > 8) map
       else if ((rank + file) % 2 == 0)
-        createTilesInColumn(file + 1, map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)), piece)))
+        createTilesInColumn(
+          file + 1,
+          map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(
+            Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)),
+            piece
+          ))
+        )
       else
-        createTilesInColumn(file + 1, map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(Position(File.fromIntUnsafe(file),Rank.fromIntUnsafe(rank)), piece)))
+        createTilesInColumn(
+          file + 1,
+          map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(
+            Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)),
+            piece
+          ))
+        )
     }
 
     createTilesInColumn(1, Map())

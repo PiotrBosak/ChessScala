@@ -1,25 +1,24 @@
 name := "ChessScala"
 
-import Dependencies.{Libraries, _}
+import Dependencies.{ Libraries, _ }
 import sbt.Keys.libraryDependencies
 
 version := "0.1"
 
-val catsVersion = "2.7.0"
+val catsVersion    = "2.7.0"
 val monocleVersion = "3.0.0-M6"
 lazy val chessLogic = (project in file("chessLogic"))
   .settings(
     name := "chessLogic",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % catsVersion,
-      "org.scalatest" %% "scalatest" % "3.2.9",
-      "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
+      "org.typelevel"              %% "cats-core"     % catsVersion,
+      "org.scalatest"              %% "scalatest"     % "3.2.9",
+      "com.github.julien-truffaut" %% "monocle-core"  % monocleVersion,
       "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
       Libraries.circeCore,
       Libraries.circeParser,
-      Libraries.kittens,
+      Libraries.kittens
     ),
-
     scalaVersion := "3.1.1"
   )
   .settings(scalacOptions -= "-Ywarn-unused")
@@ -29,6 +28,7 @@ lazy val root = (project in file("."))
     name := "chess"
   )
   .aggregate(chessLogic, core, tests)
+  .settings(scalafmtOnCompile := true)
 
 lazy val tests = (project in file("tests"))
   .configs(IntegrationTest)
@@ -63,8 +63,7 @@ lazy val tests = (project in file("tests"))
       Libraries.scalacheck,
       Libraries.weaverCats,
       Libraries.weaverDiscipline,
-      Libraries.weaverScalaCheck,
-
+      Libraries.weaverScalaCheck
     ),
     scalaVersion := "3.1.1"
   )
@@ -77,12 +76,12 @@ lazy val core = (project in file("backend"))
   .settings(
     name := "chess-backend",
     Defaults.itSettings,
-    dockerBaseImage := "openjdk:11-jre-slim-buster",
-    makeBatScripts := Seq(),
+    dockerBaseImage       := "openjdk:11-jre-slim-buster",
+    makeBatScripts        := Seq(),
     packageName in Docker := "chess",
     dockerExposedPorts ++= Seq(8080),
     dockerUpdateLatest := true,
-    scalaVersion := "3.1.1",
+    scalaVersion       := "3.1.1",
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
@@ -113,12 +112,13 @@ lazy val core = (project in file("backend"))
       Libraries.skunk("circe"),
       Libraries.slf4j,
       Libraries.squants,
-      Libraries.monocleLaw % Test,
-      Libraries.scalacheck % Test,
-      Libraries.weaverCats % Test,
+      Libraries.monocleLaw       % Test,
+      Libraries.scalacheck       % Test,
+      Libraries.weaverCats       % Test,
       Libraries.weaverDiscipline % Test,
       Libraries.weaverScalaCheck % Test
     )
-  ).dependsOn(chessLogic)
+  )
+  .dependsOn(chessLogic)
 
 addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")

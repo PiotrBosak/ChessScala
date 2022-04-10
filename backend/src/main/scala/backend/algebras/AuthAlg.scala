@@ -1,6 +1,6 @@
 package backend.algebras
 
-import backend.auth.{Crypto, Tokens}
+import backend.auth.{ Crypto, Tokens }
 import backend.config.types.TokenExpiration
 import backend.domain.jwt.*
 import backend.domain.*
@@ -16,13 +16,13 @@ import io.circe.parser.decode
 import io.circe.syntax.*
 import pdi.jwt.JwtClaim
 
-import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
+import scala.concurrent.duration.{ FiniteDuration, MILLISECONDS }
 
 trait AuthAlg[F[_]] {
 
   def newUser(username: UserName, email: Email, password: Password): F[JwtToken]
-  def login(username:UserName, password: Password): F[JwtToken]
-  def logout(token: JwtToken, userName: UserName) : F[Unit]
+  def login(username: UserName, password: Password): F[JwtToken]
+  def logout(token: JwtToken, userName: UserName): F[Unit]
 }
 
 trait UsersAuthAlg[F[_], A] {
@@ -31,9 +31,9 @@ trait UsersAuthAlg[F[_], A] {
 
 object UsersAuth {
   def admin[F[_]: Applicative](
-                                adminToken: JwtToken,
-                                adminUser: AdminUser
-                              ): UsersAuthAlg[F, AdminUser] =
+      adminToken: JwtToken,
+      adminUser: AdminUser
+  ): UsersAuthAlg[F, AdminUser] =
     new UsersAuthAlg[F, AdminUser] {
       def findUser(token: JwtToken)(claim: JwtClaim): F[Option[AdminUser]] =
         (token == adminToken)
@@ -43,8 +43,8 @@ object UsersAuth {
     }
 
   def common[F[_]: Functor](
-                             redis: RedisCommands[F, String, String]
-                           ): UsersAuthAlg[F, CommonUser] =
+      redis: RedisCommands[F, String, String]
+  ): UsersAuthAlg[F, CommonUser] =
     new UsersAuthAlg[F, CommonUser] {
       def findUser(token: JwtToken)(claim: JwtClaim): F[Option[CommonUser]] =
         redis
@@ -60,12 +60,12 @@ object UsersAuth {
 
 object AuthAlg {
   def make[F[_]: MonadThrow](
-                              tokenExpiration: TokenExpiration,
-                              tokens: Tokens[F],
-                              users: UserAlg[F],
-                              redis: RedisCommands[F, String, String],
-                              crypto: Crypto
-                            ): AuthAlg[F] =
+      tokenExpiration: TokenExpiration,
+      tokens: Tokens[F],
+      users: UserAlg[F],
+      redis: RedisCommands[F, String, String],
+      crypto: Crypto
+  ): AuthAlg[F] =
     new AuthAlg[F] {
 
       private val TokenExpiration = FiniteDuration(tokenExpiration.value, MILLISECONDS)

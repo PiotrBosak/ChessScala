@@ -12,7 +12,7 @@ object users {
      case class UserJwtAuth(value: JwtSymmetricAuth)
 
 
-  case class User(id: UserId, name: UserName, email: Email)derives Codec.AsObject
+  case class User(id: UserId, name: UserName, email: Email) derives Codec.AsObject
 
 
   case class UserWithPassword(id: UserId, name: UserName, email: Email, password: EncryptedPassword)derives Codec.AsObject

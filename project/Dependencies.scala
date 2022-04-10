@@ -16,7 +16,6 @@ object Dependencies {
     val fs2Kafka      = "2.3.0"
     val http4s        = "1.0.0-M31"
     val kittens       = "3.0.0-M1"
-    val log4cats      = "2.2.0"
     val monocle       = "3.1.0"
     val natchez       = "0.1.6"
     val natchezHttp4s = "0.3.2"
@@ -25,6 +24,7 @@ object Dependencies {
     val redis4cats    = "1.1.1"
     val refined       = "0.9.28"
     val skunk         = "0.3.1"
+    val slf4j         = "1.7.33"
     val squants       = "1.8.3"
 
     val scalacheck = "1.15.4"
@@ -38,7 +38,6 @@ object Dependencies {
     def http4s(artifact: String): ModuleID = "org.http4s"               %% s"http4s-$artifact" % V.http4s
     def skunk(artifact: String): ModuleID = "org.tpolecat"              %% s"skunk-$artifact"  % V.skunk
     def jwtScala(artifact: String): ModuleID = "com.github.jwt-scala" %% s"jwt-$artifact"    % V.jwtScala
-    def log4cats(artifact: String): ModuleID = "org.typelevel" %% s"log4cats-$artifact" % V.log4cats
 
     val cats       = "org.typelevel"    %% "cats-core"   % V.cats
     val catsEffect = "org.typelevel"    %% "cats-effect" % V.catsEffect
@@ -79,6 +78,7 @@ object Dependencies {
     val refinedCore = "eu.timepit" %% "refined"      % V.refined
     val refinedCats = "eu.timepit" %% "refined-cats" % V.refined
 
+    val slf4j = "org.slf4j" % "slf4j-simple" % V.slf4j
     val squants = "org.typelevel"  %% "squants"      % V.squants
 
     // test

@@ -8,6 +8,8 @@ import cats.effect.kernel.Resource
 import chesslogic.board.Board
 import io.circe.syntax.*
 import cats.syntax.all.*
+import backend.domain.RedisEncodeExt.asRedis
+import backend.domain.RedisEncode._
 import chesslogic.game.{BlackPlayer, Player, WhitePlayer}
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
@@ -45,9 +47,9 @@ object GameAlg {
               playerF.flatMap { player =>
                 game
                   .simpleGame
-                  .makeMove(player, move.from.toDomain, move.to.toDomain) match {
+                  .makeMove(player, move.from, move.to) match {
                   case Some(newGame) =>
-                    redis.set(gameId.toString, game.copy(simpleGame = newGame).asJson.noSpaces) >>
+                    redis.set(gameId.toString, game.copy(simpleGame = newGame).asRedis) >>
                       Applicative[F].pure[MoveResult](MoveSuccessful(newGame.currentBoard))
                   case None => Applicative[F].pure(IllegalMove)
                 }

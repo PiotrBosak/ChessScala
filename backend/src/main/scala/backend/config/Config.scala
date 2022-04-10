@@ -16,18 +16,19 @@ import eu.timepit.refined.auto.*
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
 import org.tpolecat.typename.TypeName
+
 object Config {
 
 
   given cirisConfigDecoder: ConfigDecoder[String, AppEnvironment] =
-    ConfigDecoder[String].mapOption("AppEnvironment") { s => s.toLowerCase match {
-      case "test" => Some(Test)
-      case "prod" => Some(Prod)
-      case _ => None
-    }
+    ConfigDecoder[String].mapOption("AppEnvironment") { s =>
+      s.toLowerCase match
+        case "test" => Some(Test)
+        case "prod" => Some(Prod)
+        case _ => None
     }
 
-  def load[F[_]: Async]: F[AppConfig] =
+  def load[F[_] : Async]: F[AppConfig] =
     env("SC_APP_ENV")
       .as[AppEnvironment]
       .flatMap {
@@ -51,7 +52,7 @@ object Config {
       env("SC_ACCESS_TOKEN_SECRET_KEY").as[JwtAccessTokenKeyConfig].secret,
       env("SC_ADMIN_USER_TOKEN").as[AdminUserTokenConfig].secret,
       env("SC_PASSWORD_SALT").as[PasswordSalt].secret,
-    ).parMapN { (jwtSecretKey, jwtClaim, tokenKey, adminToken, salt) =>
+      ).parMapN { (jwtSecretKey, jwtClaim, tokenKey, adminToken, salt) =>
       AppConfig(
         AdminJwtConfig(jwtSecretKey, jwtClaim, adminToken),
         tokenKey,
@@ -71,7 +72,7 @@ object Config {
         ),
         RedisConfig(redisUri),
         HttpServerConfig(
-          host = host"127.0.0.1",
+          host = host"localhost",
           port = port"8080"
         )
       )

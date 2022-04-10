@@ -4,45 +4,40 @@ import cats.data.NonEmptyList
 import chesslogic.Color.*
 import cats.syntax.all.*
 import cats.*
-import cats.derived.semiauto.{derived, product, productOrder}
-import chesslogic.board.{Board, Move, Position}
+import cats.derived.semiauto.{ derived, product, productOrder }
+import chesslogic.board.{ Board, Move, Position }
 import chesslogic.game.FullGame.Turn
-import chesslogic.game.FullGame.Turn.{BlackTurn, WhiteTurn}
+import chesslogic.game.FullGame.Turn.{ BlackTurn, WhiteTurn }
 import io.circe.Codec
 
-
-
-case class FullGame(gameHistory:NonEmptyList[Board] = NonEmptyList.one(Board()), turn : Turn = WhiteTurn) {
+case class FullGame(gameHistory: NonEmptyList[Board] = NonEmptyList.one(Board()), turn: Turn = WhiteTurn) {
 
   val currentBoard: Board = gameHistory.head
 
-
-  def makeMove(from:Position,to:Position):Option[FullGame] = {
-    val currentBoard = gameHistory.head
+  def makeMove(from: Position, to: Position): Option[FullGame] = {
+    val currentBoard        = gameHistory.head
     val possibleMovesOption = currentBoard.getPossibleMoves(from)
     for {
       possibleMoves <- possibleMovesOption
-      tileToMove <- currentBoard.getTile(to) if possibleMoves.contains(to)
-      tileFrom <- currentBoard.getTile(from)
+      (moveType, pos) <- possibleMoves.find(p => p._2 == to)
+      tileToMove    = currentBoard.getTile(to)
+      tileFrom       = currentBoard.getTile(from)
       attackingPiece <- tileFrom.currentPiece
-      move = Move(tileFrom,tileToMove)
-      isColorCorrect = if(attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
-      newBoard <- currentBoard.getBoardAfterMove(move,currentBoard) if isColorCorrect
-    } yield FullGame(newBoard :: this.gameHistory,turn = turn.changeTurn)
+      isColorCorrect = if (attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
+      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard) if isColorCorrect
+    } yield FullGame(newBoard :: this.gameHistory, turn = turn.changeTurn)
   }
 
-
-
-  def makeMoveWithoutTurn(from:Position,to:Position):Option[FullGame] = {
-    val currentBoard = gameHistory.head
+  def makeMoveWithoutTurn(from: Position, to: Position): Option[FullGame] = {
+    val currentBoard        = gameHistory.head
     val possibleMovesOption = currentBoard.getPossibleMoves(from)
     for {
       possibleMoves <- possibleMovesOption
-      tileToMove <- currentBoard.getTile(to) if possibleMoves.contains(to)
-      tileFrom <- currentBoard.getTile(from)
-      move = Move(tileFrom,tileToMove)
-      newBoard <- currentBoard.getBoardAfterMove(move,currentBoard)
-    } yield FullGame(newBoard :: this.gameHistory,turn = turn.changeTurn)
+      (moveType, pos) <- possibleMoves.find(p => p._2 == to)
+      tileToMove    = currentBoard.getTile(to)
+      tileFrom      = currentBoard.getTile(from)
+      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard)
+    } yield FullGame(newBoard :: this.gameHistory, turn = turn.changeTurn)
 
   }
 
@@ -54,7 +49,7 @@ object FullGame {
     case WhiteTurn
     case BlackTurn
 
-    def changeTurn : Turn = this match
+    def changeTurn: Turn = this match
       case WhiteTurn => BlackTurn
       case BlackTurn => WhiteTurn
 

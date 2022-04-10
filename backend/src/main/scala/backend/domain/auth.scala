@@ -38,17 +38,30 @@ object auth {
 
 
 
-  case class UserNameParam(value: NonEmptyString) derives Codec.AsObject {
-    def toDomain: UserName = UserName(value.toLowerCase)
+
+  type UserNameParam = UserNameParam.Type
+  object UserNameParam extends Newtype[String]
+  object UserNameParamExtensions {
+    extension (username: UserNameParam) {
+      def toDomain: UserName = UserName(username.value.toLowerCase)
+    }
   }
 
-  case class EmailParam(value: NonEmptyString) derives Codec.AsObject{
-    def toDomain: Email = Email(value)
+  type EmailParam = EmailParam.Type
+  object EmailParam extends Newtype[String]
+  object EmailParamExtensions {
+    extension (email: EmailParam) {
+      def toDomain: Email = Email(email.value)
+    }
   }
 
 
-  case class PasswordParam(value: NonEmptyString) derives Codec.AsObject {
-    def toDomain: Password = Password(value)
+  type PasswordParam = PasswordParam.Type
+  object PasswordParam extends Newtype[String]
+  object PasswordParamExtensions {
+    extension (password: PasswordParam) {
+      def toDomain: Password = Password(password.value)
+    }
   }
 
 

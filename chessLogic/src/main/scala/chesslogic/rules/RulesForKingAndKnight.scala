@@ -1,15 +1,15 @@
 package chesslogic.rules
 
+import scala.util.Try
 import chesslogic.board.{Board, Position}
 
 protected object RulesForKingAndKnight{
 
   def getAllMoves(position: Position, board: Board, combinations: List[(Int, Int)]): (List[Position], List[Position]) = {
-    board.getTile(position) match {
-      case Some(tile) =>
+        val tile = board.getTile(position)
         val possiblePositions = combinations
-          .map(t => Position(position.row + t._1, position.column + t._2))
-          .map(board.getTile)
+          .map(t => Try(Position(position.file.advanceUnsafe(t._2), position.rank.advanceUnsafe(t._1))).toOption)
+          .map(op => op.map(t => board.getTile(t)))
           .collect { case Some(tile) => tile }
         val attackingPiece = tile.currentPiece.get
         val moves = possiblePositions.filter(!_.hasPiece).map(_.position)
@@ -22,8 +22,5 @@ protected object RulesForKingAndKnight{
           }
         })
         (moves, attacks)
-      case None => (Nil, Nil)
-    }
-
   }
 }

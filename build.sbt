@@ -71,9 +71,17 @@ lazy val tests = (project in file("tests"))
   .dependsOn(core)
 
 lazy val core = (project in file("backend"))
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(AshScriptPlugin)
   .settings(
     name := "chess-backend",
     Defaults.itSettings,
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    makeBatScripts := Seq(),
+    packageName in Docker := "chess",
+    dockerExposedPorts ++= Seq(8080),
+    dockerUpdateLatest := true,
     scalaVersion := "3.1.1",
     libraryDependencies ++= Seq(
       Libraries.cats,
@@ -90,8 +98,6 @@ lazy val core = (project in file("backend"))
       Libraries.fs2Core,
       Libraries.fs2Kafka,
       Libraries.http4sCirce,
-      Libraries.log4cats("core"),
-      Libraries.log4cats("slf4j"),
       Libraries.http4sClient,
       Libraries.http4sDsl,
       Libraries.http4sMetrics,
@@ -105,6 +111,7 @@ lazy val core = (project in file("backend"))
       Libraries.refinedCats,
       Libraries.skunk("core"),
       Libraries.skunk("circe"),
+      Libraries.slf4j,
       Libraries.squants,
       Libraries.monocleLaw % Test,
       Libraries.scalacheck % Test,

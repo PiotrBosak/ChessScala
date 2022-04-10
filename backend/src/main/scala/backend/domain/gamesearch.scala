@@ -21,10 +21,10 @@ object gamesearch {
     case GameAlreadyStarted
 
 
-  sealed trait PokeResult
-  case object GameNotFoundYet extends PokeResult
-  case class GameFound(gameId: GameId) extends PokeResult
-  case object PokeFailure extends PokeResult
+  enum PokeResult:
+    case GameNotFoundYet
+    case GameFound(gameId: GameId)
+    case PokeFailure
 
   object PokeResult {
     implicit  val pokeResultEncoder: Encoder[PokeResult] = Encoder.instance {

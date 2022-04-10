@@ -14,6 +14,9 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.Status.*
 import org.http4s.dsl.Http4sDsl
+import backend.domain.auth.UserNameParamExtensions.toDomain as userToDomain
+import backend.domain.auth.PasswordParamExtensions.toDomain as passwordToDomain
+import backend.domain.auth.EmailParamExtensions.toDomain as emailToDomain
 import org.http4s.server.Router
 
 final case class UserRoutes[F[_] : JsonDecoder : MonadThrow](
@@ -29,8 +32,8 @@ final case class UserRoutes[F[_] : JsonDecoder : MonadThrow](
       req
         .decodeR[CreateUser] { user =>
           auth
-            .newUser(user.username.toDomain, user.email.toDomain, user.password.toDomain)
-            .flatMap(jwt => Created(RegistrationResponse(jwt, user.username.toDomain)))
+            .newUser(user.username.userToDomain, user.email.emailToDomain, user.password.passwordToDomain)
+            .flatMap(jwt => Created(RegistrationResponse(jwt, user.username.userToDomain)))
             .recoverWith {
               case UserNameInUse(u) => Conflict(u.show)
             }

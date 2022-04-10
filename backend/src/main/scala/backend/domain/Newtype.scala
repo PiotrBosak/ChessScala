@@ -4,6 +4,7 @@ import java.util.UUID
 import backend.{IsUUID, Wrapper}
 
 import scala.language.adhocExtensions
+import cats.implicits._
 import backend.domain.OrphanInstances.given
 import cats.{Eq, Order, Show}
 import ciris.{ConfigDecoder, ConfigValue}

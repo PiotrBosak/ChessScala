@@ -6,6 +6,9 @@ import backend.ext.http4s.refined.RefinedRequestDecoder
 import cats.MonadThrow
 import cats.syntax.all.*
 import org.http4s.*
+import backend.domain.auth.UserNameParamExtensions.toDomain as userToDomain
+import backend.domain.auth.PasswordParamExtensions.toDomain as passwordToDomain
+import backend.domain.auth.EmailParamExtensions.toDomain as emailToDomain
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
@@ -22,7 +25,7 @@ final case class LoginRoutes[F[_] : JsonDecoder : MonadThrow](
     case req@POST -> Root / "login" =>
       req.decodeR[LoginUser] { user =>
         auth
-          .login(user.username.toDomain, user.password.toDomain)
+          .login(user.username.userToDomain, user.password.passwordToDomain)
           .flatMap(Ok(_))
           .recoverWith {
             case UserNotFound(_) | InvalidPassword(_) => Forbidden()

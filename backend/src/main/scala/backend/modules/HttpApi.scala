@@ -54,7 +54,12 @@ sealed abstract class HttpApi[F[_] : Async: Logger] private(
       AutoSlash(http)
     } andThen { (http: HttpRoutes[F]) =>
       @nowarn
-      val cors = CORS(http)
+      val config = CORSConfig
+        .default
+        .withAnyOrigin(false)
+        .withAllowedOrigins(Set("http://localhost:8000"))
+      @nowarn
+      val cors = CORS(http,config)
       cors
     } andThen { (http: HttpRoutes[F]) =>
       Timeout(60.seconds)(http)

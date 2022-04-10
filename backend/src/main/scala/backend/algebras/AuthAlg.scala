@@ -11,6 +11,7 @@ import cats.*
 import cats.syntax.all.*
 import backend.domain.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
+import backend.domain.RedisEncodeExt.asRedis
 import io.circe.parser.decode
 import io.circe.syntax.*
 import pdi.jwt.JwtClaim
@@ -76,9 +77,9 @@ object AuthAlg {
             for {
               i <- users.create(username, email, crypto.encrypt(password))
               t <- tokens.create
-              u = User(i, username, email).asJson.noSpaces
-              _ <- redis.setEx(t.value, u, TokenExpiration)
-              _ <- redis.setEx(username.show, t.value, TokenExpiration)
+              u = User(i, username, email).asRedis
+              _ <- redis.setEx(t.value.asRedis, u, TokenExpiration)
+              _ <- redis.setEx(username.asRedis, t.value, TokenExpiration)
             } yield t
         }
 
@@ -92,14 +93,14 @@ object AuthAlg {
               case Some(t) => JwtToken(t).pure[F]
               case None =>
                 tokens.create.flatTap { t =>
-                  redis.setEx(t.value, user.asJson.noSpaces, TokenExpiration) *>
-                    redis.setEx(username.show, t.value, TokenExpiration)
+                  redis.setEx(t.asRedis, user.asRedis, TokenExpiration) *>
+                    redis.setEx(username.asRedis, t.asRedis, TokenExpiration)
                 }
             }
         }
 
       def logout(token: JwtToken, username: UserName): F[Unit] =
-        redis.del(token.show) *> redis.del(username.show).void
+        redis.del(token.asRedis) *> redis.del(username.asRedis).void
 
     }
 }

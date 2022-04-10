@@ -8,6 +8,7 @@ import cats.Applicative
 import cats.syntax.all.*
 import cats.effect.kernel.{Ref, Resource, Temporal}
 import cats.effect.std.{Queue, Random}
+import backend.domain.RedisEncodeExt.asRedis
 import chesslogic.board.Board
 import chesslogic.game.SimpleGame
 import dev.profunktor.redis4cats.RedisCommands
@@ -40,14 +41,14 @@ object GameMatcherAlg {
                 Logger[F].info {
                   s"found game between $fst and $snd"
                 } >>
-                redis.set(fst.asJson.noSpaces, gameId.asJson.noSpaces) *> redis.set(snd.asJson.noSpaces, gameId.asJson.noSpaces)
+                redis.set(fst.asRedis, gameId.asRedis) *> redis.set(snd.asRedis, gameId.asRedis)
             }
       }.flatten >> Temporal[F].sleep(waitPeriod) >> matchGames
 
     private def saveGame(first: UserId, second: UserId, gameId: GameId): F[Unit] = {
       Random[F].nextBoolean.flatMap { b =>
         val (white, black) = if (b) (first, second) else (second, first)
-        redis.set(gameId.asJson.noSpaces, PvPGame(white, black, gameId, SimpleGame(Board())).asJson.noSpaces)
+        redis.set(gameId.asRedis, PvPGame(white, black, gameId, SimpleGame(Board())).asRedis)
       }
     }
 

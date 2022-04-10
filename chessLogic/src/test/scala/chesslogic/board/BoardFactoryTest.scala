@@ -2,7 +2,9 @@ package chesslogic.board
 
 import chesslogic.*
 import chesslogic.Color.*
-import chesslogic.pieces.*
+import chesslogic.board.File.*
+import chesslogic.board.Rank.*
+import chesslogic.pieces.Piece.*
 import org.scalatest.flatspec.AnyFlatSpec
 
 class BoardFactoryTest extends AnyFlatSpec {
@@ -39,7 +41,7 @@ class BoardFactoryTest extends AnyFlatSpec {
   }
 
   "Board" should "have a white rook at A1 and a black bishop at F8" in {
-    assert(board.tiles.values.find(t => t.position.column == 1 && t.position.row == 1).get.currentPiece.get == Rook(White))
-    assert(board.tiles.values.find(t => t.position.column == 6 && t.position.row == 8).get.currentPiece.get == Bishop(Black))
+    assert(board.tiles.values.find(t => t.position.file == A && t.position.rank == One).get.currentPiece.get == Rook(White))
+    assert(board.tiles.values.find(t => t.position.file == F && t.position.rank == Eight).get.currentPiece.get == Bishop(Black))
   }
 }

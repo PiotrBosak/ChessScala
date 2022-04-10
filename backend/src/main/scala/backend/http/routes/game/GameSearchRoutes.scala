@@ -3,6 +3,7 @@ package backend.http.routes.game
 import io.odin.Logger
 import backend.algebras.GameSearchAlg
 import backend.domain.gamesearch
+import backend.domain.gamesearch.PokeResult.GameFound
 import backend.http.auth.users.CommonUser
 import cats.{Applicative, Monad}
 import cats.syntax.all.*
@@ -27,7 +28,7 @@ final case class GameSearchRoutes[F[_]: Monad: Logger](gameSearchAlg: GameSearch
       gameSearchAlg
       .poll(user.value.id)
         .flatTap {
-          case gamesearch.GameFound(gameId) =>
+          case GameFound(gameId) =>
             Logger[F].warn(s"FOUND GAME $gameId")
           case _ => Applicative[F].unit
         }

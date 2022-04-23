@@ -4,7 +4,6 @@ import cats.implicits.catsSyntaxEitherId
 import cats.syntax.contravariant._
 import cats.{Eq, Monoid, Show}
 import chesslogic.board.{Position, Tile}
-import backend.domain.gameLogic.{Position => BPosition, Tile => BTile}
 import dev.profunktor.auth.jwt.JwtToken
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
@@ -31,10 +30,6 @@ trait OrphanInstances {
   implicit val keyPositionDecoder: KeyDecoder[Position] = KeyDecoder.instance(j => Decoder[Position].decodeJson(Json.fromString(j)).toOption)
   implicit val encodeMap = Encoder.encodeMap[Position,Tile]
   implicit val decodeMap = Decoder.decodeMap[Position,Tile]
-  implicit val keyPositionEncoderB: KeyEncoder[BPosition] = KeyEncoder.instance(Encoder[BPosition].apply(_).noSpaces)
-  implicit val keyPositionDecoderB: KeyDecoder[BPosition] = KeyDecoder.instance(j => Decoder[BPosition].decodeJson(Json.fromString(j)).toOption)
-  implicit val encodeMapB = Encoder.encodeMap[BPosition,BTile]
-  implicit val decodeMapB = Decoder.decodeMap[BPosition,BTile]
 
   implicit val nonNegativeDecoder: Decoder[Int Refined NonNegative] =
     Decoder[Int].emap(i => if (i >= 0) Right(Refined.unsafeApply[Int,NonNegative](i)) else Left("Passed number is negative"))

@@ -8,5 +8,4 @@ object orphanInstances {
   implicit val keyPositionDecoder: KeyDecoder[Position] = KeyDecoder.instance(j => Decoder[Position].decodeJson(Json.fromString(j)).toOption)
   implicit val encodeMap = Encoder.encodeMap[Position,Tile]
   implicit val decodeMap = Decoder.decodeMap[Position,Tile]
-  implicit val encodeBackendMap = Encoder.encodeMap[Position,Tile]
 }

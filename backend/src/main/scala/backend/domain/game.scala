@@ -1,8 +1,7 @@
 package backend.domain
 
 import backend.domain.auth.UserId
-import backend.domain.gameLogic.Position
-import chesslogic.board.Board
+import chesslogic.board.{Board, Position}
 import chesslogic.game.SimpleGame
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive

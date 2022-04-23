@@ -1,6 +1,7 @@
 package chesslogic.utils
 
-import chesslogic.board.{Position, Tile}
+import chesslogic.board.position.Position
+import chesslogic.board.Tile
 import io.circe.{Decoder, Encoder, Json, KeyDecoder, KeyEncoder}
 
 object orphanInstances {

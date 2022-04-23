@@ -44,7 +44,7 @@ object GameAlg {
               playerF.flatMap { player =>
                 game
                   .simpleGame
-                  .makeMove(player, move.from.toDomain, move.to.toDomain) match {
+                  .makeMove(player, move.from, move.to) match {
                   case Some(newGame) =>
                     redis.set(gameId.toString, game.copy(simpleGame = newGame).asJson.noSpaces) >>
                       Applicative[F].pure[MoveResult](MoveSuccessful(newGame.currentBoard))

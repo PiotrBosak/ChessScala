@@ -1,6 +1,10 @@
 package chesslogic.board
 
 import chesslogic._
+import chesslogic.board.position.File._
+import chesslogic.board.position.Rank._
+import chesslogic.board.position._
+import chesslogic.board.position.Position
 import chesslogic.pieces._
 
 import scala.annotation.tailrec
@@ -24,49 +28,48 @@ case object BoardFactory {
 
   }
 
-  private def createTilesWithBlackBishops(): Map[Position, Tile] = Map(
-    Position(8, 3) -> Tile(White, Position(8, 3), Some(Bishop(Black))),
-    Position(8, 6) -> Tile(Black, Position(8, 6), Some(Bishop(Black)))
-  ).view.mapValues(_.get).toMap
 
+  private def createTilesWithBlackBishops(): Map[Position, Tile] = Map(
+    Position(C, Eight) -> Tile(Position(C, Eight), Some(Bishop(Black))),
+    Position(F, Eight) -> Tile(Position(F, Eight), Some(Bishop(Black)))
+  ).view.toMap
 
   private def createTilesWithBlackKnights(): Map[Position, Tile] = Map(
-    Position(8, 2) -> Tile(Black, Position(8, 2), Some(Knight(Black))),
-    Position(8, 7) -> Tile(White, Position(8, 7), Some(Knight(Black)))
-  ).view.mapValues(_.get).toMap
+    Position(B, Eight) -> Tile(Position(B, Eight), Some(Knight(Black))),
+    Position(G, Eight) -> Tile(Position(G, Eight), Some(Knight(Black)))
+  ).view.toMap
 
   private def createTilesWithBlackRooks(): Map[Position, Tile] = Map(
-    Position(8, 1) -> Tile(White, Position(8, 1), Some(Rook(Black))),
-    Position(8, 8) -> Tile(Black, Position(8, 8), Some(Rook(Black)))
-  ).view.mapValues(_.get).toMap
+    Position(A, Eight) -> Tile(Position(A, Eight), Some(Rook(Black))),
+    Position(H, Eight) -> Tile(Position(H, Eight), Some(Rook(Black)))
+  ).view.toMap
 
   private def createTilesWithWhiteBishops(): Map[Position, Tile] = Map(
-    Position(1, 3) -> Tile(Black, Position(1, 3), Some(Bishop(White))),
-    Position(1, 6) -> Tile(White, Position(1, 6), Some(Bishop(White)))
-  ).view.mapValues(_.get).toMap
+    Position(C, One) -> Tile(Position(C, One), Some(Bishop(White))),
+    Position(F, One) -> Tile(Position(F, One), Some(Bishop(White)))
+  ).view.toMap
 
   private def createTilesWithWhiteKnights(): Map[Position, Tile] = Map(
-    Position(1, 2) -> Tile(White, Position(1, 2), Some(Knight(White))),
-    Position(1, 7) -> Tile(Black, Position(1, 7), Some(Knight(White)))
-  ).view.mapValues(_.get).toMap
+    Position(B, One) -> Tile(Position(B, One), Some(Knight(White))),
+    Position(G, One) -> Tile(Position(G, One), Some(Knight(White)))
+  ).view.toMap
 
   private def createTilesWithWhiteRooks(): Map[Position, Tile] = Map(
-    Position(1, 1) -> Tile(Black, Position(1, 1), Some(Rook(White))),
-    Position(1, 8) -> Tile(White, Position(1, 8), Some(Rook(White)))
-  ).view.mapValues(_.get).toMap
+    Position(A, One) -> Tile(Position(A, One), Some(Rook(White))),
+    Position(H, One) -> Tile(Position(H, One), Some(Rook(White)))
+  ).view.toMap
 
   private def createTileWithBlackKing(): (Position, Tile) =
-    Position(8, 5) -> Tile(White, Position(8, 5), Some(King(Black))).get
+    Position(E, Eight) -> Tile(Position(E, Eight), Some(King(Black)))
 
   private def createTileWithBlackQueen(): (Position, Tile) =
-    Position(8, 4) -> Tile(Black, Position(8, 4), Some(Queen(Black))).get
+    Position(D, Eight) -> Tile(Position(D, Eight), Some(Queen(Black)))
 
   private def createTileWithWhiteKing(): (Position, Tile) =
-    Position(1, 5) -> Tile(Black, Position(1, 5), Some(King(White))).get
+    Position(E, One) -> Tile(Position(E, One), Some(King(White)))
 
   private def createTileWithWhiteQueen(): (Position, Tile) =
-    Position(1, 4) -> Tile(White, Position(1, 4), Some(Queen(White))).get
-
+    Position(D, One) -> Tile(Position(D, One), Some(Queen(White)))
 
   private def createTilesWithNoPieces(): Map[Position, Tile] = {
     @tailrec
@@ -78,24 +81,35 @@ case object BoardFactory {
 
   }
 
-
   private def createTilesWithBlackPawns(): Map[Position, Tile] =
     createTiles(7, Some(Pawn(Black)))
 
   private def createTilesWithWhitePawns(): Map[Position, Tile] =
     createTiles(2, Some(Pawn(White)))
 
-
-  private def createTiles(row: Int, piece: Option[Piece]) = {
+  private def createTiles(rank: Int, piece: Option[Piece]): Map[Position, Tile] = {
     @tailrec
-    def createTilesInColumn(column: Int, map: Map[Position, Tile]): Map[Position, Tile] = {
-      if (column > 8) map
-      else if ((row + column) % 2 == 0)
-        createTilesInColumn(column + 1, map + (Position(row, column) -> Tile(Black, Position(row, column), piece).get))
+    def createTilesInColumn(file: Int, map: Map[Position, Tile]): Map[Position, Tile] = {
+      if (file > 8) map
+      else if ((rank + file) % 2 == 0)
+        createTilesInColumn(
+          file + 1,
+          map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(
+            Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)),
+            piece
+          ))
+        )
       else
-        createTilesInColumn(column + 1, map + (Position(row, column) -> Tile(White, Position(row, column), piece).get))
+        createTilesInColumn(
+          file + 1,
+          map + (Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)) -> Tile(
+            Position(File.fromIntUnsafe(file), Rank.fromIntUnsafe(rank)),
+            piece
+          ))
+        )
     }
 
     createTilesInColumn(1, Map())
   }
 }
+

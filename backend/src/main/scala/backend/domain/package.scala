@@ -1,18 +1,16 @@
 package backend
 
-import cats.implicits.catsSyntaxEitherId
 import cats.syntax.contravariant._
 import cats.{Eq, Monoid, Show}
-import chesslogic.board.{Position, Tile}
+import chesslogic.board.Tile
+import chesslogic.board.position.Position
 import dev.profunktor.auth.jwt.JwtToken
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.numeric.NonNegative
 import eu.timepit.refined.types.string.NonEmptyString
-import io.circe.{Decoder, Encoder, Json, KeyDecoder, KeyEncoder}
+import io.circe._
 import squants.market.{Currency, Money, USD}
-
-import java.time.Duration
 
 package object domain extends OrphanInstances
 

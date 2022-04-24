@@ -1,11 +1,11 @@
 package backend.algebras
 
-import backend.auth.{ Crypto, Tokens }
+import backend.auth.{Crypto, Tokens}
 import backend.config.types.TokenExpiration
+import backend.domain.RedisEncode.RedisEncodeExt
 import backend.domain._
 import backend.domain.auth._
 import backend.http.auth.users._
-
 import cats._
 import cats.syntax.all._
 import dev.profunktor.auth.jwt.JwtToken
@@ -16,7 +16,7 @@ import pdi.jwt.JwtClaim
 
 trait AuthAlg[F[_]] {
 
-  def newUser(username: UserName, password: Password): F[JwtToken]
+  def newUser(username: UserName, email: UserEmail, password: Password): F[JwtToken]
   def login(username:UserName, password: Password): F[JwtToken]
   def logout(token: JwtToken, userName: UserName) : F[Unit]
 }
@@ -66,14 +66,14 @@ object AuthAlg {
 
       private val TokenExpiration = tokenExpiration.value
 
-      def newUser(username: UserName, password: Password): F[JwtToken] =
+      def newUser(username: UserName, email: UserEmail, password: Password): F[JwtToken] =
         users.find(username).flatMap {
           case Some(_) => UserNameInUse(username).raiseError[F, JwtToken]
           case None =>
             for {
-              i <- users.create(username, crypto.encrypt(password))
+              i <- users.create(username, email, crypto.encrypt(password))
               t <- tokens.create
-              u = User(i, username).asJson.noSpaces
+              u = User(i, username, email).asRedis
               _ <- redis.setEx(t.value, u, TokenExpiration)
               _ <- redis.setEx(username.show, t.value, TokenExpiration)
             } yield t
@@ -89,7 +89,7 @@ object AuthAlg {
               case Some(t) => JwtToken(t).pure[F]
               case None =>
                 tokens.create.flatTap { t =>
-                  redis.setEx(t.value, user.asJson.noSpaces, TokenExpiration) *>
+                  redis.setEx(t.value, user.asRedis, TokenExpiration) *>
                     redis.setEx(username.show, t.value, TokenExpiration)
                 }
             }

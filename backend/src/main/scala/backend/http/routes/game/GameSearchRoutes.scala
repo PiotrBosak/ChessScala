@@ -24,9 +24,9 @@ final case class GameSearchRoutes[F[_]: Monad](gameSearchAlg: GameSearchAlg[F]) 
       gameSearchAlg
         .startSearch(user.value.id)
         .flatMap(Ok(_))
-    case POST -> Root / "poke"  as user=>
+    case POST -> Root / "poll"  as user=>
       gameSearchAlg
-      .poke(user.value.id)
+      .poll(user.value.id)
       .flatMap(Ok(_))
     case POST -> Root / "stop" as user=>
       gameSearchAlg

@@ -1,11 +1,13 @@
 package backend.http.routes.auth
 
 import backend.algebras.AuthAlg
-import backend.domain.auth.{CreateUser, UserNameInUse}
+import backend.domain.auth.{CreateUser, UserName, UserNameInUse}
 import backend.ext.http4s.refined.RefinedRequestDecoder
-import backend.domain.tokenEncoder
+import backend.http.routes.auth.UserRoutes.RegistrationResponse
 import cats.MonadThrow
 import cats.syntax.all._
+import dev.profunktor.auth.jwt.JwtToken
+import io.circe.{Encoder, Json}
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
@@ -21,20 +23,39 @@ final case class UserRoutes[F[_] : JsonDecoder : MonadThrow](
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
 
     case req@POST -> Root / "users" =>
-      req
-        .decodeR[CreateUser] { user =>
-          auth
-            .newUser(user.username.toDomain, user.password.toDomain)
-            .flatMap(Created(_))
-            .recoverWith {
-              case UserNameInUse(u) => Conflict(u.show)
-            }
-        }
-
+      req.decodeR[CreateUser] { user =>
+        auth
+          .newUser(user.username.toDomain, user.email.toDomain, user.password.toDomain)
+          .flatMap(jwt => Created(RegistrationResponse(jwt, user.username.toDomain)))
+          .recoverWith {
+            case UserNameInUse(u) => Conflict(u.show)
+          }
+      }
   }
 
   val routes: HttpRoutes[F] = Router(
     prefixPath -> httpRoutes
   )
 
+}
+object UserRoutes {
+  final case class RegistrationResponse(
+                                         token: JwtToken,
+                                         username: UserName
+                                       )
+
+  implicit val encoder: Encoder[RegistrationResponse] = Encoder.instance { rr =>
+    import io.circe.syntax._
+    Json.fromFields(
+      List(
+        "user" -> Json.fromFields(
+          List(
+            "username" -> rr.username.value.asJson,
+            "token"    -> rr.token.value.asJson
+          )
+        )
+      )
+    )
+
+  }
 }

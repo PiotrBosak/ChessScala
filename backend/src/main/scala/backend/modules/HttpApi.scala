@@ -29,15 +29,16 @@ sealed abstract class HttpApi[F[_] : Async] private(
     JwtAuthMiddleware[F, CommonUser](security.userJwtAuth.value, security.usersAuth.findUser)
 
 
+  private val userRoutes = UserRoutes[F](security.auth).routes
   private val loginRoutes = LoginRoutes[F](security.auth).routes
   private val logoutRoutes = LogoutRoutes[F](security.auth).routes(usersMiddleware)
-  private val userRoutes = UserRoutes[F](security.auth).routes
 
   private val gameRoutes = GameRoutes[F](algebras.gameAlg).routes(usersMiddleware)
-  private val gameSearchAlg = GameSearchRoutes[F](algebras.gameSearchAlg).routes(usersMiddleware)
+  private val gameSearch = GameSearchRoutes[F](algebras.gameSearchAlg).routes(usersMiddleware)
 
+  //first those that don't need a token, then the rest
   private val openRoutes: HttpRoutes[F] =
-    loginRoutes <+> logoutRoutes <+> userRoutes <+> gameRoutes <+> gameSearchAlg
+    userRoutes <+> loginRoutes <+> logoutRoutes <+> gameRoutes <+> gameSearch
 
   private val routes: HttpRoutes[F] = Router(
     "/v1" -> openRoutes

@@ -45,7 +45,7 @@ object Security {
     for {
       adminClaim <- jwtDecode[F](adminToken, adminJwtAuth.value)
       content    <- ApplicativeThrow[F].fromEither(jsonDecode[ClaimContent](adminClaim.content))
-      adminUser = AdminUser(User(UserId(content.uuid), UserName("admin")))
+      adminUser = AdminUser(User(UserId(content.uuid), UserName("admin"), UserEmail("admin@chess.com")))
       tokens <- JwtExpire.make[F].map(Tokens.make[F](_, cfg.tokenConfig.value, cfg.tokenExpiration))
       crypto <- Crypto.make[F](cfg.passwordSalt.value)
       users     = UserAlg.make[F](postgres)

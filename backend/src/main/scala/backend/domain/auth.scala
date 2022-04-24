@@ -25,6 +25,10 @@ object auth {
 
   @derive(decoder, encoder, eqv, show)
   @newtype
+  case class UserEmail(value: String)
+
+  @derive(decoder, encoder, eqv, show)
+  @newtype
   case class Password(value: String)
 
   @derive(decoder, encoder, eqv, show)
@@ -44,6 +48,11 @@ object auth {
   case class UserNameParam(value: NonEmptyString) {
     def toDomain: UserName = UserName(value.toLowerCase)
   }
+  @derive(decoder, encoder)
+  @newtype
+  case class UserEmailParam(value: NonEmptyString) {
+    def toDomain: UserEmail = UserEmail(value)
+  }
 
   @derive(decoder, encoder)
   @newtype
@@ -54,6 +63,7 @@ object auth {
   @derive(decoder, encoder)
   case class CreateUser(
       username: UserNameParam,
+      email: UserEmailParam,
       password: PasswordParam
   )
 

@@ -5,6 +5,8 @@ import backend.domain.game.GameId
 import backend.domain.gamesearch._
 import cats.{Applicative, Monad, MonadThrow}
 import cats.effect.std.Queue
+import backend.domain.RedisEncode._
+import backend.domain.RedisEncode
 import cats.syntax.all._
 import io.circe.syntax._
 import cats.effect.kernel.{Concurrent, Ref, Resource}
@@ -18,7 +20,7 @@ trait GameSearchAlg[F[_]] {
 
   def startSearch(userId: UserId): F[StartSearchResult]
 
-  def poke(userId: UserId): F[PokeResult]
+  def poll(userId: UserId): F[PokeResult]
 
   def stopSearching(userId: UserId): F[StopSearchResult]
 
@@ -26,19 +28,19 @@ trait GameSearchAlg[F[_]] {
 
 object GameSearchAlg {
   def make[F[_] : MonadThrow](redis: RedisCommands[F, String, String],
-                         queue: Queue[F, UserId],
-                         cancellations: Ref[F, List[UserId]],
-                        ): GameSearchAlg[F] = new GameSearchAlg[F] {
+                              queue: Queue[F, UserId],
+                              cancellations: Ref[F, List[UserId]],
+                             ): GameSearchAlg[F] = new GameSearchAlg[F] {
     override def startSearch(userId: UserId): F[StartSearchResult] =
-      redis.get(userId.asJson.noSpaces).flatMap {
+      redis.get(userId.asRedis).flatMap {
         case Some(_) =>
           Applicative[F].pure(GameAlreadyStarted)
         case None =>
           queue.offer(userId).as(SearchStartSuccessful)
       }
 
-    override def poke(userId: UserId): F[PokeResult] =
-      redis.get(userId.asJson.noSpaces).flatMap {
+    override def poll(userId: UserId): F[PokeResult] =
+      redis.get(userId.asRedis).flatMap {
         case Some(gameId) =>
           Json.fromString(gameId).as[GameId].liftTo[F].map { gameId =>
             GameFound(gameId)
@@ -48,7 +50,7 @@ object GameSearchAlg {
       }
 
     override def stopSearching(userId: UserId): F[StopSearchResult] =
-      redis.get(userId.asJson.noSpaces).flatMap {
+      redis.get(userId.asRedis).flatMap {
         case Some(_) =>
           Applicative[F].pure(GameAlreadyFound)
         case None =>

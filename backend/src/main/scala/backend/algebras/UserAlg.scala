@@ -14,7 +14,7 @@ trait UserAlg[F[_]] {
 
   def find(username: UserName): F[Option[UserWithPassword]]
 
-  def create(username: UserName, password: EncryptedPassword): F[UserId]
+  def create(username: UserName, email: UserEmail, password: EncryptedPassword): F[UserId]
 }
 
 object UserAlg {
@@ -29,18 +29,18 @@ object UserAlg {
         postgres.use { session =>
           session.prepare(selectUser).use { q =>
             q.option(username).map {
-              case Some(u ~ p) => UserWithPassword(u.id, u.name, p).some
+              case Some(u ~ p) => UserWithPassword(u.id, u.name, u.email, p).some
               case _ => none[UserWithPassword]
             }
           }
         }
 
-      def create(username: UserName, password: EncryptedPassword): F[UserId] =
+      def create(username: UserName, email: UserEmail, password: EncryptedPassword): F[UserId] =
         postgres.use { session =>
           session.prepare(insertUser).use { cmd =>
             ID.make[F, UserId].flatMap { id =>
               cmd
-                .execute(User(id, username) ~ password)
+                .execute(User(id, username, email) ~ password)
                 .as(id)
                 .recoverWith {
                   case SqlState.UniqueViolation(_) =>
@@ -56,12 +56,12 @@ object UserAlg {
 private object UserSQL {
 
   val codec: Codec[User ~ EncryptedPassword] =
-    (userId ~ userName ~ encPassword).imap {
-      case i ~ n ~ p =>
-        User(i, n) ~ p
+    (userId ~ userName ~ userEmail ~ encPassword).imap {
+      case i ~ n ~ e ~ p =>
+        User(i, n, e) ~ p
     } {
       case u ~ p =>
-        u.id ~ u.name ~ p
+        u.id ~ u.name ~ u.email ~ p
     }
 
   val selectUser: Query[UserName, User ~ EncryptedPassword] =

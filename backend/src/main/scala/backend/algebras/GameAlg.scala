@@ -34,9 +34,13 @@ object GameAlg {
         .get(gameId.toString)
         .flatMap {
           case Some(game) =>
-            Json.fromString(game).as[PvPGame].liftTo[F].flatMap(game => {
-              val playerF: F[Player] = {
-                if (game.whitePlayer == userId) Applicative[F].pure(WhitePlayer)
+            Json
+              .fromString(game)
+              .as[PvPGame]
+              .liftTo[F]
+              .flatMap(game => {
+                val playerF: F[Player] = {
+                  if (game.whitePlayer == userId) Applicative[F].pure(WhitePlayer)
                 else if (game.blackPlayer == userId) Applicative[F].pure(BlackPlayer)
                 //todo fix it somehow
                 else MonadThrow[F].raiseError(new Throwable("player plumbula"))

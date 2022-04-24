@@ -52,7 +52,7 @@ object Config {
           port = 5432,
           user = "postgres",
           password = "password",
-          database = "store",
+          database = "chess",
           max = 10
         ),
         RedisConfig(redisUri),

@@ -1,2 +1,6 @@
 #+TITLE: Notes
-* zrob tez sklep, zeby mozna bylo kupowac itemki
+* things to do
+** test game matching extensively
+*** use testcontainers for redis
+** clean up build sbt
+** add some github actions

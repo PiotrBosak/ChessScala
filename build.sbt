@@ -5,37 +5,25 @@ import sbt.Keys.libraryDependencies
 
 version := "0.1"
 
-
-lazy val akkaVersion = "2.6.8"
-val catsVersion = "2.1.1"
-val monocleVersion = "2.0.3"
-val akkaHttpVersion = "10.1.12"
+lazy val commonSettings = Seq(
+  scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
+  addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
+  scalacOptions -= "-Ywarn-unused",
+ scalacOptions -= "-Xfatal-warnings"
+)
 lazy val chessLogic = (project in file("chessLogic"))
+  .settings(commonSettings)
   .settings(
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
     name := "chessLogic",
-    addCompilerPlugin("org.typelevel" % "kind-projector" % "0.13.2" cross CrossVersion.full),
+    scalaVersion := "2.13.7",
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % catsVersion,
-      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
-      "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-      "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
-      "org.scalatest" %% "scalatest" % "3.2.0",
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion,
-      "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
-      "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
-      "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
+      Libraries.cats,
+      Libraries.scalaTest,
       Libraries.derevoCore,
       Libraries.derevoCats,
       Libraries.derevoCirce,
-    ),
-
-    scalaVersion := "2.13.5"
+    )
   )
-  .settings(scalacOptions -= "-Ywarn-unused")
-  .settings(scalacOptions -= "-Xfatal-warnings")
 lazy val root = (project in file("."))
   .settings(
     name := "chess"
@@ -44,15 +32,15 @@ lazy val root = (project in file("."))
 
 lazy val tests = (project in file("tests"))
   .configs(IntegrationTest)
+  .settings(commonSettings)
   .settings(
     name := "chess-backend-test-suite",
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
+    scalaVersion := "2.13.7",
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     Defaults.itSettings,
     libraryDependencies ++= Seq(
       CompilerPlugin.kindProjector,
       CompilerPlugin.betterMonadicFor,
-      CompilerPlugin.semanticDB,
       Libraries.catsLaws,
       Libraries.log4catsNoOp,
       Libraries.monocleLaw,
@@ -60,21 +48,18 @@ lazy val tests = (project in file("tests"))
       Libraries.weaverCats,
       Libraries.weaverDiscipline,
       Libraries.weaverScalaCheck
-    ),
-    scalaVersion := "2.13.5"
+    )
   )
   .dependsOn(core)
 
 lazy val core = (project in file("backend"))
   .settings(
     name := "chess-backend",
-    scalacOptions ++= List("-Ymacro-annotations", "-Yrangepos", "-Wconf:cat=unused:info"),
+    scalaVersion := "2.13.7",
     Defaults.itSettings,
-    scalaVersion := "2.13.5",
     libraryDependencies ++= Seq(
       CompilerPlugin.kindProjector,
       CompilerPlugin.betterMonadicFor,
-      CompilerPlugin.semanticDB,
       Libraries.cats,
       Libraries.catsEffect,
       Libraries.catsRetry,

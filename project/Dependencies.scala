@@ -27,6 +27,7 @@ object Dependencies {
     val organizeImports  = "0.5.0"
     val semanticDB       = "4.4.28"
 
+    val scalaTest = "3.2.2"
     val weaver = "0.7.6"
   }
 
@@ -86,6 +87,7 @@ object Dependencies {
     val log4catsNoOp      = "org.typelevel"       %% "log4cats-noop"      % V.log4cats
     val monocleLaw        = "dev.optics"          %% "monocle-law"        % V.monocle
     val refinedScalacheck = "eu.timepit"          %% "refined-scalacheck" % V.refined
+    val scalaTest         = "org.scalatest"       %% "scalatest"          % V.scalaTest
     val weaverCats        = "com.disneystreaming" %% "weaver-cats"        % V.weaver
     val weaverDiscipline  = "com.disneystreaming" %% "weaver-discipline"  % V.weaver
     val weaverScalaCheck  = "com.disneystreaming" %% "weaver-scalacheck"  % V.weaver
@@ -100,9 +102,6 @@ object Dependencies {
     )
     val kindProjector = compilerPlugin(
       "org.typelevel" % "kind-projector" % V.kindProjector cross CrossVersion.full
-    )
-    val semanticDB = compilerPlugin(
-      "org.scalameta" % "semanticdb-scalac" % V.semanticDB cross CrossVersion.full
     )
   }
 

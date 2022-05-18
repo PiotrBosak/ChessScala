@@ -11,7 +11,6 @@ import cats.syntax.all._
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.parser.decode
-import io.circe.syntax._
 import pdi.jwt.JwtClaim
 
 trait AuthAlg[F[_]] {

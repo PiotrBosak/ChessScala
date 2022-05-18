@@ -28,7 +28,10 @@ object CheckAndMateRules {
       .flatMap(tuple => board.getMovesForPiece(tuple._1, tuple._2))
       .toList
 
-    possibleAttacks.map(_._2).contains(kingTile.position)
+    possibleAttacks.map {
+      case (_, position) => position
+    }
+      .contains(kingTile.position)
   }
 
   def cannotBeDefended(kingColor: Color, game: FullGame): Boolean = {

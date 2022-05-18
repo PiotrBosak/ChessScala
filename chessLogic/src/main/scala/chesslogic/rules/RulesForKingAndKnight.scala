@@ -14,13 +14,13 @@ protected object RulesForKingAndKnight{
                    combinations: List[(Int, Int)]
                  ): (List[Position], List[Position]) = {
     val tile = board.getTile(position)
-    val possiblePositions = combinations
+    val possibleTiles = combinations
       .map(t => Try(Position(position.file.advanceUnsafe(t._2), position.rank.advanceUnsafe(t._1))).toOption)
       .map(op => op.map(t => board.getTile(t)))
       .collect { case Some(tile) => tile }
     val attackingPiece = tile.currentPiece.get
-    val moves          = possiblePositions.filter(!_.hasPiece).map(_.position)
-    val attacks = possiblePositions.foldLeft(List.empty[Position])((acc, t) => {
+    val moves          = possibleTiles.filter(!_.hasPiece).map(_.position)
+    val attacks = possibleTiles.foldLeft(List.empty[Position])((acc, t) => {
       t.currentPiece match {
         case Some(piece) =>
           if (piece.color != attackingPiece.color) t.position :: acc

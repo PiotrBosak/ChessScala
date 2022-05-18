@@ -7,7 +7,6 @@ import chesslogic.board.position._
 import chesslogic.board.{Board, Tile}
 import chesslogic.pieces._
 
-//todo it should be a typeclass, that way it doesn't make much sense
 object PawnRules extends MovingRules[Pawn] {
 
   override def getPossibleAttacks(position: Position, board: Board): List[(MoveType, Position)] = {

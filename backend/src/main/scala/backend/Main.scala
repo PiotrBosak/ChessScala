@@ -7,8 +7,7 @@ import backend.resources.{AppResources, MkHttpServer}
 import cats.effect._
 import cats.effect.std.{Queue, Random, Supervisor}
 import dev.profunktor.redis4cats.log4cats._
-import eu.timepit.refined.auto._
-import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
+import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 object Main extends IOApp.Simple {

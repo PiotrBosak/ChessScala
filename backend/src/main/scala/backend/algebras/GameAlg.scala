@@ -5,7 +5,6 @@ import backend.domain.game.{DrawProposal, DrawProposalAnswer, DrawProposalAnswer
 import cats.{Applicative, MonadThrow}
 import cats.effect.Temporal
 import cats.effect.kernel.Resource
-import chesslogic.board.Board
 import io.circe.syntax._
 import cats.syntax.all._
 import chesslogic.game.{BlackPlayer, Player, WhitePlayer}
@@ -43,7 +42,7 @@ object GameAlg {
                   if (game.whitePlayer == userId) Applicative[F].pure(WhitePlayer)
                 else if (game.blackPlayer == userId) Applicative[F].pure(BlackPlayer)
                 //todo fix it somehow
-                else MonadThrow[F].raiseError(new Throwable("player plumbula"))
+                else MonadThrow[F].raiseError(new Throwable("sth weird happened here"))
               }
               playerF.flatMap { player =>
                 game

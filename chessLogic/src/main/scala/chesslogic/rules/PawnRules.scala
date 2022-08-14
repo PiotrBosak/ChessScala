@@ -37,7 +37,7 @@ object PawnRules extends MovingRules[Pawn] {
 
   private def lePassant(position: Position, board: Board): Option[(MoveType, Position)] = {
     (lePassantGet(position, board, isLeft = true) orElse lePassantGet(position, board, isLeft = false))
-      .map(p => (MoveType.LePassant, p))
+      .map(p => (MoveType.EnPassant, p))
   }
 
   private def lePassantGet(position: Position, board: Board, isLeft: Boolean): Option[Position] = {

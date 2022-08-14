@@ -19,7 +19,7 @@ case class SimpleGame(currentBoard: Board, turn: Turn = WhiteTurn) derives Codec
       tileFrom   = currentBoard.getTile(from)
       attackingPiece <- tileFrom.currentPiece
       isColorCorrect = if (attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
-      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, currentBoard.findTile(to), currentBoard)
+      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, currentBoard.findTile(to))
       if isColorCorrect
     } yield SimpleGame(newBoard, turn = turn.changeTurn)
   }

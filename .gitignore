@@ -1,15 +1,13 @@
-# Default ignored files
-/shelf/
-/.idea/workspace.xml
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-/*.iml
-/*.xml
-/.idea
-/.bsp/
-/chessLogic/target/
-/project/target/
-/target/
+.DS_Store
+.bloop/
+.bsp/
+.idea/
+.metals/
+.parcel-cache/
+.sbt-hydra-history
+dist/
+node_modules/
+notes/
+static/
+target/
+yarn.lock

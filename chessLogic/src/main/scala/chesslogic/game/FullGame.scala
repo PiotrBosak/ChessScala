@@ -24,7 +24,7 @@ case class FullGame(gameHistory: NonEmptyList[Board] = NonEmptyList.one(Board())
       tileFrom   = currentBoard.getTile(from)
       attackingPiece <- tileFrom.currentPiece
       isColorCorrect = if (attackingPiece.color == White) turn == WhiteTurn else turn == BlackTurn
-      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard) if isColorCorrect
+      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove) if isColorCorrect
     } yield FullGame(newBoard :: this.gameHistory, turn = turn.changeTurn)
   }
 
@@ -36,7 +36,7 @@ case class FullGame(gameHistory: NonEmptyList[Board] = NonEmptyList.one(Board())
       (moveType, pos) <- possibleMoves.find(p => p._2 == to)
       tileToMove = currentBoard.getTile(to)
       tileFrom   = currentBoard.getTile(from)
-      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove, currentBoard)
+      newBoard <- currentBoard.getBoardAfterMove(moveType, tileFrom, tileToMove)
     } yield FullGame(newBoard :: this.gameHistory, turn = turn.changeTurn)
 
   }

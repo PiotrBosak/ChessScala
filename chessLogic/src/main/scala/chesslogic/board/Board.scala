@@ -49,22 +49,33 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
     }
   }
 
-  def getBoardAfterMove(moveType: MoveType, tileFrom: Tile, tileTo: Tile, board: Board): Option[Board] =
+
+  def possibleValidMoves(position: Position): List[(MoveType, Position)] = {
+    val moves = getPossibleMoves(position).getOrElse(Nil)
+    moves
+      .filter { case (moveType, p) =>
+        getBoardAfterMove(moveType, findTile(position), findTile(p)).isDefined
+      }
+  }
+
+
+  def getBoardAfterMove(moveType: MoveType, positionFrom: Position, positionTo: Position): Option[Board] =
+    getBoardAfterMove(moveType, getTile(positionFrom), getTile(positionTo))
+  def getBoardAfterMove(moveType: MoveType, tileFrom: Tile, tileTo: Tile): Option[Board] =
     tileFrom.currentPiece
       .map(piece => {
-        ("zzzzzzzzzzzzzzz")
         (
           piece,
           moveType match
             case Castling  => makeCastlingMove(tileFrom, tileTo)
-            case LePassant => makeLePassant(tileFrom, tileTo, piece, board)
+            case EnPassant => makeEnPassant(tileFrom, tileTo, piece)
             case _         => makeNormalMove(tileFrom, tileTo, piece)
         )
       })
       .filter(tuple => !CheckAndMateRules.isKingChecked(tuple._2, tuple._1.color))
       .map(_._2)
 
-  private def isLePassant(tileFrom: Tile, tileTo: Tile): Boolean = {
+  private def isEnPassant(tileFrom: Tile, tileTo: Tile): Boolean = {
     previousMove.exists { previous =>
       isTwoTilePawnMove(previous) &&
       tileTo.position.file == previous.to.file &&
@@ -80,18 +91,16 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
     })
   }
 
-  private def makeLePassant(tileFrom: Tile, tileTo: Tile, piece: Piece, board: Board): Board = {
-    ("XXXXXXXXx3")
+  private def makeEnPassant(tileFrom: Tile, tileTo: Tile, piece: Piece): Board = {
     val attackingColor = tileFrom.currentPiece.get.color
     val difference     = if (attackingColor == White) 1 else -1
     val newTileFrom    = tileFrom.copy(currentPiece = None, hasMoved = true)
     val newTileTo      = tileTo.copy(currentPiece = Some(piece), hasMoved = true)
     val capturedPawntile =
-      board.getTile(tileTo.position.copy(rank = Rank.fromIntUnsafe(tileTo.position.rank.toNumber - difference)))
+      getTile(tileTo.position.copy(rank = Rank.fromIntUnsafe(tileTo.position.rank.toNumber - difference)))
     val newTileAfterCapturing = capturedPawntile.copy(currentPiece = None)
-    ("YYYYYYYYYY")
     (s"$newTileAfterCapturing")
-    val newMove = Move(tileFrom.position, newTileTo.position, LePassant)
+    val newMove = Move(tileFrom.position, newTileTo.position, EnPassant)
     updateBoard(newTileFrom, newMove)
       .updateBoard(newTileTo, newMove)
       .updateBoard(newTileAfterCapturing, newMove)
@@ -129,7 +138,6 @@ case class Board private (tiles: Map[Position, Tile], previousMove: Option[Move]
   }
 
   private def makeNormalMove(tileFrom: Tile, tileTo: Tile, pieceMoving: Piece): Board =
-    ("XXXXXXXXx2")
     val newTileFrom = tileFrom.copy(currentPiece = None, hasMoved = true)
     val newTileTo   = tileTo.copy(currentPiece = Some(pieceMoving), hasMoved = true)
     val newMove     = Move(tileFrom.position, newTileTo.position, Normal)

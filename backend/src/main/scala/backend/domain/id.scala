@@ -1,10 +1,10 @@
 package backend.domain
 
-import commondomain.IsUUID
 import backend.effects.GenUUID
 import cats.Functor
-import commondomain.IsUUID.*
+import lib.server.IsUUID.*
 import cats.syntax.functor.*
+import lib.server.IsUUID
 
 object ID {
   def make[F[_]: Functor: GenUUID, A: IsUUID]: F[A] =

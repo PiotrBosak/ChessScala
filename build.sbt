@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(chessLogic, frontend, backend, tests)
+  .aggregate(frontend, backend, tests)
   .settings(scalafmtOnCompile := true)
 
 lazy val tests = (project in file("tests"))
@@ -56,14 +56,22 @@ lazy val tests = (project in file("tests"))
   )
   .dependsOn(backend)
 
-lazy val chessLogic = (project in file("chessLogic"))
+lazy val lib = (project in file("lib"))
+  .settings(scalacOptions += "-explain")
   .settings(
-    name := "chessLogic",
+    name := "lib",
     libraryDependencies ++= Seq(
       "org.typelevel"              %% "cats-core"     % catsVersion,
       "org.scalatest"              %% "scalatest"     % "3.2.9",
       "com.github.julien-truffaut" %% "monocle-core"  % monocleVersion,
       "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
+      Libraries.cats,
+      Libraries.monocleCore,
+      Libraries.squants,
+      Libraries.monocleLaw,
+      Libraries.cirisCore,
+      Libraries.cirisRefined,
+      Libraries.ip4s,
       Libraries.circeCore,
       Libraries.circeParser,
       Libraries.kittens
@@ -72,24 +80,6 @@ lazy val chessLogic = (project in file("chessLogic"))
   )
   .settings(scalacOptions -= "-Ywarn-unused")
   .settings(scalacOptions -= "-Xfatal-warnings")
-
-lazy val commonDomain = (project in file("commonDomain"))
-  .settings(
-    name := "commonDomain",
-    libraryDependencies ++= Seq(
-      Libraries.cats,
-      Libraries.monocleCore,
-      Libraries.squants,
-      Libraries.monocleLaw,
-      Libraries.cirisCore,
-      Libraries.cirisRefined,
-      Libraries.ip4s
-    ),
-    scalaVersion := "3.2.0"
-  )
-  .settings(scalacOptions -= "-Ywarn-unused")
-  .settings(scalacOptions -= "-Xfatal-warnings")
-  .dependsOn(chessLogic)
 
 lazy val backend = (project in file("backend"))
   .enablePlugins(DockerPlugin)
@@ -141,7 +131,7 @@ lazy val backend = (project in file("backend"))
       Libraries.weaverScalaCheck % Test
     )
   )
-  .dependsOn(chessLogic, commonDomain)
+  .dependsOn(lib)
 
 lazy val frontend =
   (project in file("frontend"))
@@ -184,6 +174,6 @@ lazy val frontend =
         "org.scalatest" %%% "scalatest"            % "3.2.9"
       )
     )
-    .dependsOn(chessLogic, commonDomain)
+    .dependsOn(lib)
 
 addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")

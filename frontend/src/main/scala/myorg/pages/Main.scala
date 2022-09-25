@@ -2,24 +2,23 @@ package myorg.pages
 
 import cats.effect.IO
 import myorg.utils.HtmlUtils.*
-import chesslogic.pieces.Piece
-import chesslogic.pieces.Piece.*
-import chesslogic.Color
-import chesslogic.Color.*
-import chesslogic.board.{ Board, File, Position, Rank, Tile }
-import chesslogic.board.Rank.*
-import chesslogic.board.File.*
+import lib.logic.pieces.Piece.*
+import lib.logic.Color
+import lib.logic.Color.*
+import lib.logic.board.Rank.*
+import lib.logic.board.File.*
 import tyrian.*
 import myorg.Route
 import tyrian.Html.*
-import chesslogic.board.MoveType.*
+import lib.logic.board.MoveType.*
 import myorg.pages.Login as LoginPage
 import myorg.pages.Register as RegisterPage
 import scala.scalajs.js.annotation.*
-import chesslogic.board.MoveType
-import chesslogic.game.FullGame.Turn
+import lib.logic.game.FullGame.Turn
 import Main.Model
 import Main.Msg
+import lib.logic.board.{Board, File, MoveType, Position, Rank, Tile}
+import lib.logic.pieces.Piece
 import myorg.SelectionState.*
 import myorg.algebras.UserAlg.*
 import tyrian.Navigation.Result

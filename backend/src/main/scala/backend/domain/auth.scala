@@ -7,7 +7,8 @@ import io.circe.*
 import java.util.UUID
 import javax.crypto.Cipher
 import scala.util.control.NoStackTrace
-import commondomain.*
+import lib.*
+import lib.server.{IdNewtype, Newtype}
 
 object auth {
 

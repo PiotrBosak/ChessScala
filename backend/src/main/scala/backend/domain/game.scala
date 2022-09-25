@@ -1,11 +1,12 @@
 package backend.domain
 
 import backend.domain.auth.UserId
-import chesslogic.board.{ Board, Position }
-import chesslogic.game.SimpleGame
 import io.circe.Codec
 import dev.profunktor.redis4cats.codecs.Codecs.derive
-import commondomain.*
+import lib.*
+import lib.logic.board.{Board, Position}
+import lib.logic.game.SimpleGame
+import lib.server.IdNewtype
 
 import java.util.UUID
 

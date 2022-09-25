@@ -1,11 +1,11 @@
 package backend
 
 import backend.domain.auth.UserId
-import backend.domain.game.{ GameId, PvPGame }
-import chesslogic.board.Board
-import chesslogic.game.FullGame.Turn
-import chesslogic.game.FullGame.Turn.{ BlackTurn, WhiteTurn }
-import chesslogic.game.SimpleGame
+import backend.domain.game.{GameId, PvPGame}
+import lib.logic.game.FullGame.Turn
+import lib.logic.game.SimpleGame
+import lib.logic.board.Board
+import lib.logic.game.FullGame.Turn.{BlackTurn, WhiteTurn}
 import org.scalacheck.Gen
 
 import java.util.UUID

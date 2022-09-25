@@ -7,8 +7,8 @@ import backend.domain.game.{ GameId, PvPGame }
 import backend.effects.GenUUID
 import cats.effect.kernel.{ Ref, Resource, Temporal }
 import cats.effect.std.{ Queue, Random }
-import chesslogic.board.Board
 import dev.profunktor.redis4cats.RedisCommands
+import lib.logic.board.Board
 
 import scala.concurrent.duration.*
 import skunk.Session

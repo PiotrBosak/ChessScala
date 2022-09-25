@@ -10,7 +10,7 @@ import cats.syntax.all.*
 import Login.Msg.*
 import myorg.algebras.UserAlg
 import tyrian.Html
-import domain.user.*
+import lib.user.*
 import myorg.Route
 import myorg.pages.Commons.Problem
 import myorg.pages.Commons.Problem.*

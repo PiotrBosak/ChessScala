@@ -2,16 +2,17 @@ package backend.algebras
 
 import io.odin.Logger
 import backend.domain.auth.UserId
-import backend.domain.game.{ GameId, PvPGame }
+import backend.domain.game.{GameId, PvPGame}
 import backend.effects.GenUUID
 import cats.Applicative
 import cats.syntax.all.*
-import cats.effect.kernel.{ Ref, Resource, Temporal }
-import cats.effect.std.{ Queue, Random }
+import cats.effect.kernel.{Ref, Resource, Temporal}
+import cats.effect.std.{Queue, Random}
 import backend.domain.RedisEncodeExt.asRedis
-import chesslogic.board.Board
-import chesslogic.game.SimpleGame
 import dev.profunktor.redis4cats.RedisCommands
+import lib.logic.board.Board
+import lib.logic.game
+import lib.logic.game.SimpleGame
 import io.circe.syntax.*
 import skunk.Session
 
@@ -46,7 +47,7 @@ object GameMatcherAlg {
     private def saveGame(first: UserId, second: UserId, gameId: GameId): F[Unit] = {
       Random[F].nextBoolean.flatMap { b =>
         val (white, black) = if (b) (first, second) else (second, first)
-        redis.set(gameId.asRedis, PvPGame(white, black, gameId, SimpleGame(Board())).asRedis)
+        redis.set(gameId.asRedis, PvPGame(white, black, gameId, game.SimpleGame(Board())).asRedis)
       }
     }
 

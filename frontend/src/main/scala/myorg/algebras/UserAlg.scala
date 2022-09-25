@@ -1,7 +1,7 @@
 package myorg.algebras
 
-import domain.user.*
-import domain.user.Profile
+import lib.user.*
+import lib.user.Profile
 import org.http4s.ember.client.EmberClientBuilder
 import cats.effect.IO
 import cats.implicits.*

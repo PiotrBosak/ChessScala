@@ -14,16 +14,16 @@ import backend.domain.game.{
 import cats.{ Applicative, MonadThrow }
 import cats.effect.Temporal
 import cats.effect.kernel.Resource
-import chesslogic.board.Board
 import io.circe.syntax.*
 import cats.syntax.all.*
 import backend.domain.RedisEncodeExt.asRedis
 import backend.domain.RedisEncode._
-import chesslogic.game.{ BlackPlayer, Player, WhitePlayer }
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import skunk.Session
 import MoveResult.*
+import lib.logic.board.Board
+import lib.logic.game.{BlackPlayer, Player, WhitePlayer}
 
 trait GameAlg[F[_]] {
 

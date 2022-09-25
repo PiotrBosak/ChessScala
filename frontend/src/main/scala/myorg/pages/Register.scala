@@ -1,6 +1,6 @@
 package myorg.pages
 import tyrian.*
-import domain.*
+import lib.*
 import myorg.algebras.UserAlg
 import tyrian.Html.*
 import myorg.misc.Session
@@ -9,7 +9,7 @@ import cats.syntax.all.*
 import cats.data.*
 import cats.data.Validated.*
 import Register.Msg.*
-import domain.user.*
+import lib.user.*
 import myorg.pages.Commons.*
 import myorg.pages.Commons.Problem.*
 

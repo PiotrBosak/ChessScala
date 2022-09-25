@@ -1,10 +1,7 @@
-package chesslogic.board
+package logic.rules.board
 
-import chesslogic.*
-import chesslogic.Color.*
-import chesslogic.board.File.*
-import chesslogic.board.Rank.*
-import chesslogic.pieces.Piece.*
+import lib.logic.rules.*
+import lib.logic.Color.*
 import org.scalatest.flatspec.AnyFlatSpec
 
 class BoardFactoryTest extends AnyFlatSpec {

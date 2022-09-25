@@ -1,13 +1,13 @@
 package myorg.pages
 import myorg.algebras.StartGameAlg
 import tyrian.*
-import domain.*
+import lib.*
 import tyrian.Html.*
 import myorg.misc.Session
 import myorg.Route
 import cats.syntax.all.*
 import cats.data.*
-import domain.user.*
+import lib.user.*
 import HomePage.*
 import myorg.pages.Commons.*
 import myorg.pages.Commons.Problem.*

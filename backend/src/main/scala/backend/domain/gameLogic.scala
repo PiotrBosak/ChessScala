@@ -1,9 +1,9 @@
 package backend.domain
 
-import chesslogic.pieces.Piece
 import io.circe.Codec
-import chesslogic.board.Position
 import backend.domain.*
+import lib.logic.board.Position
+import lib.logic.pieces.Piece
 
 object gameLogic {
 

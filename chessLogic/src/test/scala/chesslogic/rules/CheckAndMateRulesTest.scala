@@ -1,11 +1,7 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.Color.*
-import chesslogic.board.Position
-import chesslogic.board.File.*
-import chesslogic.board.Rank.*
-import chesslogic.game.FullGame
-import chesslogic.rules.CheckAndMateRules.{ isKingChecked, isKingMated }
+import lib.logic.Color.*
+import lib.logic.rules.CheckAndMateRules.{isKingChecked, isKingMated}
 import org.scalatest.flatspec.AnyFlatSpec
 
 class CheckAndMateRulesTest extends AnyFlatSpec {

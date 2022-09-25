@@ -1,10 +1,6 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.board.Position
-import chesslogic.game.FullGame
-import chesslogic.board.File.*
-import chesslogic.board.Rank.*
-import chesslogic.rules.QueenRules.getPossibleMoves
+import lib.logic.rules.QueenRules.getPossibleMoves
 import org.scalatest.flatspec.AnyFlatSpec
 
 class QueenRulesTest extends AnyFlatSpec {

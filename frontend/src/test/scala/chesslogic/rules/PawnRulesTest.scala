@@ -1,10 +1,10 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.board.File.*
-import chesslogic.board.Position
-import chesslogic.board.Rank.*
-import chesslogic.game.FullGame
-import chesslogic.rules.PawnRules.{ getPossibleAttacks, getPossibleMoves }
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
+import lib.logic.rules.PawnRules.{ getPossibleAttacks, getPossibleMoves }
+import lib.logic.board.Position
+import lib.logic.game.FullGame
 import org.scalatest.flatspec.AnyFlatSpec
 
 class PawnRulesTest extends AnyFlatSpec {

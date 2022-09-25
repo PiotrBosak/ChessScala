@@ -1,9 +1,9 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.board.File.*
-import chesslogic.board.Position
-import chesslogic.board.Rank.*
-import chesslogic.game.FullGame
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
+import lib.logic.board.Position
+import lib.logic.game.FullGame
 import org.scalatest.flatspec.AnyFlatSpec
 
 class GameTest extends AnyFlatSpec {

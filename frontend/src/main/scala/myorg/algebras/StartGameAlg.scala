@@ -2,7 +2,7 @@ package myorg.algebras
 
 import StartGameResult.*
 import scala.concurrent.duration.Duration
-import domain.game.GameId
+import lib.game.GameId
 trait StartGameAlg[F[_]] {
 
   def startMultiGame: F[Unit]

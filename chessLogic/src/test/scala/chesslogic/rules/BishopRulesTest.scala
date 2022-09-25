@@ -1,10 +1,6 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.board.Position
-import chesslogic.game.FullGame
-import chesslogic.rules.BishopRules.getPossibleMoves
-import chesslogic.board.File.*
-import chesslogic.board.Rank.*
+import lib.logic.rules.BishopRules.getPossibleMoves
 import org.scalatest.flatspec.AnyFlatSpec
 
 class BishopRulesTest extends AnyFlatSpec {

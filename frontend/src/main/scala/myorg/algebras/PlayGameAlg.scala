@@ -1,6 +1,6 @@
 package myorg.algebras
 import PlayGameAlg.*
-import domain.game.*
+import lib.game.*
 
 trait PlayGameAlg[F[_]] {
 

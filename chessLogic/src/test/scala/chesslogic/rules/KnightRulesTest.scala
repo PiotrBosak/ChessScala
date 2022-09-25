@@ -1,9 +1,5 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.board.Position
-import chesslogic.board.File.*
-import chesslogic.board.Rank.*
-import chesslogic.game.FullGame
 import org.scalatest.flatspec.AnyFlatSpec
 
 class KnightRulesTest extends AnyFlatSpec {

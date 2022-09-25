@@ -1,11 +1,11 @@
-package chesslogic.rules
+package lib.logic.rules
 
-import chesslogic.Color.*
-import chesslogic.board.File.*
-import chesslogic.board.Position
-import chesslogic.board.Rank.*
-import chesslogic.game.FullGame
-import chesslogic.pieces.Piece.*
+import lib.logic.Color.*
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
+import lib.logic.board.Position
+import lib.logic.game.FullGame
+import lib.logic.pieces.Piece.*
 import org.scalatest.flatspec.AnyFlatSpec
 
 class KingRulesTest extends AnyFlatSpec {

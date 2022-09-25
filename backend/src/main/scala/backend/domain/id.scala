@@ -1,8 +1,9 @@
 package backend.domain
 
-import backend.IsUUID
+import commondomain.IsUUID
 import backend.effects.GenUUID
 import cats.Functor
+import commondomain.IsUUID.*
 import cats.syntax.functor.*
 
 object ID {

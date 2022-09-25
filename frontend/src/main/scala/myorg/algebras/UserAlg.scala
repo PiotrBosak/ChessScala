@@ -4,6 +4,10 @@ import domain.user.*
 import domain.user.Profile
 import org.http4s.ember.client.EmberClientBuilder
 import cats.effect.IO
+import cats.implicits.*
+import org.http4s.Request
+import org.http4s.Uri
+import cats.effect.Resource
 import myorg.pages.Main
 
 trait UserAlg[F[_]] {
@@ -12,7 +16,7 @@ trait UserAlg[F[_]] {
 
   def register(registrationData: RegistrationData): F[Option[Profile]]
 
-  def logout(jwt: JwtToken): F[Unit]
+  def logout(jwt: JwtTokenParam): F[Unit]
 
 }
 object UserAlg {
@@ -20,12 +24,28 @@ object UserAlg {
   given UserAlg[IO] = new UserAlg[IO] {
 
     def login(loginData: LoginData): IO[Option[Profile]] = ???
-      // EmberClientBuilder.default[IO].build.use { client => 
-      //   client.expect[JwtToken](Main.address)
-      // }
 
-    def register(registrationData: RegistrationData): IO[Option[Profile]] = IO.pure(None)
-    def logout(jwt: JwtToken): IO[Unit] = IO.unit
+    def register(registrationData: RegistrationData): IO[Option[Profile]] = {
+      EmberClientBuilder
+        .default[IO]
+        .build
+        .use { client =>
+          client
+            .run {
+              Request[IO](
+                uri = Uri.fromString("localhost:8080/api") match {
+                  case Left(_)  => throw new RuntimeException()
+                  case Right(a) => a
+                }
+              )
+            }
+            .use { resp =>
+              IO(None)
+            }
+        }
+
+    }
+    def logout(jwt: JwtTokenParam): IO[Unit] = IO.unit
 
   }
 }

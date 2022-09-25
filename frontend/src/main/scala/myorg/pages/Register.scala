@@ -94,9 +94,9 @@ object Register {
 
   private def validateForm(form: Form): ValidatedNel[Problem, RegistrationData] = {
     (
-      UserName.make(form.username).toValidNel(InvalidEntry(ValidatedField.Username, "Username is too short")),
-      Email.make(form.email).toValidNel(InvalidEntry(ValidatedField.Email, "Invalid email")),
-      Password.make(form.password).toValidNel(InvalidEntry(ValidatedField.Password, "Invalid password"))
+      UserNameParam.make(form.username).toValidNel(InvalidEntry(ValidatedField.Username, "Username is too short")),
+      EmailParam.make(form.email).toValidNel(InvalidEntry(ValidatedField.Email, "Invalid email")),
+      PasswordParam.make(form.password).toValidNel(InvalidEntry(ValidatedField.Password, "Invalid password"))
     )
       .mapN(RegistrationData.apply)
 

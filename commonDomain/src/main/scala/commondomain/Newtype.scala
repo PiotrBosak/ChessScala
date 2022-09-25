@@ -1,11 +1,12 @@
-package backend.domain
+package commondomain
 
 import java.util.UUID
-import backend.{ IsUUID, Wrapper }
+import commondomain.{ IsUUID, Wrapper }
 
 import scala.language.adhocExtensions
 import cats.implicits._
-import backend.domain.OrphanInstances.given
+import commondomain.OrphanInstances
+import commondomain.OrphanInstanceGivens.given
 import cats.{ Eq, Order, Show }
 import ciris.{ ConfigDecoder, ConfigValue }
 import eu.timepit.refined.api.{ Refined, RefinedType, RefinedTypeOps }
@@ -19,7 +20,7 @@ abstract class Newtype[A](using
     enc: Encoder[A],
     dec: Decoder[A],
     cfg: ConfigDecoder[String, A]
-):
+) {
   opaque type Type = A
 
   inline def apply(a: A): Type = a
@@ -40,9 +41,11 @@ abstract class Newtype[A](using
   given ConfigDecoder[String, Type] = cfg
   given Ordering[Type]              = ord.toOrdering
 
-abstract class IdNewtype extends Newtype[UUID]:
+}
+abstract class IdNewtype extends Newtype[UUID] {
   given IsUUID[Type]                = derive[IsUUID]
   def unsafeFrom(str: String): Type = apply(UUID.fromString(str))
+}
 
 abstract class RefNewtype[T, RT](using
     eqv: Eq[RT],
@@ -52,10 +55,11 @@ abstract class RefNewtype[T, RT](using
     dec: Decoder[RT],
     cfg: ConfigDecoder[String, RT],
     rt: RefinedType.AuxT[RT, T]
-) extends Newtype[RT]:
+) extends Newtype[RT] {
   object Ops extends RefinedTypeOps[RT, T]
   def from(t: T): Either[String, Type] = Ops.from(t).map(apply(_))
   def unsafeFrom(t: T): Type           = apply(Ops.unsafeFrom(t))
+}
 
 abstract class NumNewtype[A](using
     eqv: Eq[A],
@@ -65,8 +69,10 @@ abstract class NumNewtype[A](using
     dec: Decoder[A],
     cfg: ConfigDecoder[String, A],
     num: Numeric[A]
-) extends Newtype[A]:
+) extends Newtype[A] {
 
   extension (x: Type)
     inline def -[T](using inv: T =:= Type)(y: T): Type = apply(num.minus(x.value, inv.apply(y).value))
     inline def +[T](using inv: T =:= Type)(y: T): Type = apply(num.plus(x.value, inv.apply(y).value))
+    
+}

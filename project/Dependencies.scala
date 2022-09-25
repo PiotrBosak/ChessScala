@@ -10,6 +10,7 @@ object Dependencies {
     val circe         = "0.14.1"
     val jwtScala      = "9.0.4"
     val ciris         = "2.3.2"
+    val ip4s          = "3.1.3"
     val doobie        = "1.0.0-RC2"
     val flyway        = "8.5.1"
     val fs2Core       = "3.2.5"
@@ -68,6 +69,7 @@ object Dependencies {
 
     val neutronCore       = "dev.profunktor" %% "neutron-core"       % V.neutron
     val redis4catsEffects = "dev.profunktor" %% "redis4cats-effects" % V.redis4cats
+    val ip4s              = "com.comcast"    %% "ip4s-core" % V.ip4s
 
     val monocleCore = "dev.optics" %% "monocle-core" % V.monocle
 

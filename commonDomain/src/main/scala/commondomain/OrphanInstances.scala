@@ -1,4 +1,4 @@
-package backend.domain
+package commondomain
 
 import java.time.Instant
 import java.util.UUID
@@ -11,7 +11,7 @@ import ciris.ConfigDecoder
 import com.comcast.ip4s.*
 import io.circe.{ Decoder, Encoder }
 
-object OrphanInstances:
+object OrphanInstanceGivens:
   given Eq[Instant]    = Eq.by(_.getEpochSecond)
   given Order[Instant] = Order.by(_.getEpochSecond)
   given Show[Instant]  = Show.show[Instant](_.toString)

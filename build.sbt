@@ -52,7 +52,7 @@ lazy val tests = (project in file("tests"))
       Libraries.weaverDiscipline,
       Libraries.weaverScalaCheck
     ),
-    scalaVersion := "3.1.2"
+    scalaVersion := "3.2.0"
   )
   .dependsOn(backend)
 
@@ -68,10 +68,28 @@ lazy val chessLogic = (project in file("chessLogic"))
       Libraries.circeParser,
       Libraries.kittens
     ),
-    scalaVersion := "3.1.2"
+    scalaVersion := "3.2.0"
   )
   .settings(scalacOptions -= "-Ywarn-unused")
   .settings(scalacOptions -= "-Xfatal-warnings")
+
+lazy val commonDomain = (project in file("commonDomain"))
+  .settings(
+    name := "commonDomain",
+    libraryDependencies ++= Seq(
+      Libraries.cats,
+      Libraries.monocleCore,
+      Libraries.squants,
+      Libraries.monocleLaw,
+      Libraries.cirisCore,
+      Libraries.cirisRefined,
+      Libraries.ip4s
+    ),
+    scalaVersion := "3.2.0"
+  )
+  .settings(scalacOptions -= "-Ywarn-unused")
+  .settings(scalacOptions -= "-Xfatal-warnings")
+  .dependsOn(chessLogic)
 
 lazy val backend = (project in file("backend"))
   .enablePlugins(DockerPlugin)
@@ -85,7 +103,7 @@ lazy val backend = (project in file("backend"))
     packageName in Docker := "chess",
     dockerExposedPorts ++= Seq(8080),
     dockerUpdateLatest := true,
-    scalaVersion       := "3.1.1",
+    scalaVersion       := "3.2.0",
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
@@ -123,7 +141,7 @@ lazy val backend = (project in file("backend"))
       Libraries.weaverScalaCheck % Test
     )
   )
-  .dependsOn(chessLogic)
+  .dependsOn(chessLogic, commonDomain)
 
 lazy val frontend =
   (project in file("frontend"))
@@ -131,7 +149,7 @@ lazy val frontend =
     .settings( // Normal settings
       name         := "chessfronttyrian",
       version      := "0.0.1",
-      scalaVersion := "3.1.2",
+      scalaVersion := "3.2.0",
       organization := "myorg",
       libraryDependencies ++= Seq(
         "io.indigoengine" %%% "tyrian-io" % "0.5.1",
@@ -166,6 +184,6 @@ lazy val frontend =
         "org.scalatest" %%% "scalatest"            % "3.2.9"
       )
     )
-    .dependsOn(chessLogic)
+    .dependsOn(chessLogic, commonDomain)
 
 addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")

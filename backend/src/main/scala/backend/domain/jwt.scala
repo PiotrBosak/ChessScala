@@ -3,6 +3,7 @@ package backend.domain
 import org.http4s.Credentials.Token
 import org.http4s.{ AuthScheme, Request }
 import org.http4s.headers.Authorization
+import commondomain.*
 
 object jwt {
 

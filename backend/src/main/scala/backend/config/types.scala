@@ -1,11 +1,12 @@
 package backend.config
 
-import backend.domain.Newtype
+import commondomain.Newtype
 import ciris.*
 import ciris.refined.*
 import com.comcast.ip4s.{ Host, Port }
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.net.UserPortNumber
+import commondomain.*
 
 import scala.concurrent.duration.*
 

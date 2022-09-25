@@ -2,34 +2,32 @@ package domain
 import java.util.UUID
 import cats.implicits.*
 object user {
-  final case class UserId(value: UUID)
-  final case class UserName private (value: String)
-  object UserName {
-    def make(s: String): Option[UserName] =
+  final case class UserIdParam(value: UUID)
+  final case class UserNameParam private (value: String)
+  object UserNameParam {
+    def make(s: String): Option[UserNameParam] =
       if (s.length > 3)
-        UserName(s).some
+        UserNameParam(s).some
       else None
 
   }
-  final case class Password private (value: String)
-  object Password {
-    def make(s: String): Option[Password] = 
+  final case class PasswordParam private (value: String)
+  object PasswordParam {
+    def make(s: String): Option[PasswordParam] = 
       if(s.length > 3 && s.exists(_.isDigit)) 
-        Password(s).some
+        PasswordParam(s).some
       else None
   }
-  final case class Email private (value: String)
-  object Email {
-    def make(s: String): Option[Email] = 
+  final case class EmailParam private (value: String)
+  object EmailParam {
+    def make(s: String): Option[EmailParam] = 
       if(s.length > 3 & s.contains("@"))
-        Email(s).some
+        EmailParam(s).some
       else None
   }
-  final case class JwtToken(value: String)
-  final case class Profile(userName: UserName, token: JwtToken)
+  final case class JwtTokenParam(value: String)
+  final case class Profile(userName: UserNameParam, token: JwtTokenParam)
 
-  final case class RegistrationData(username: UserName, email: Email, password: Password)
-  final case class LoginData(username: UserName, password: Password)
-
-
+  final case class RegistrationData(username: UserNameParam, email: EmailParam, password: PasswordParam)
+  final case class LoginData(username: UserNameParam, password: PasswordParam)
 }

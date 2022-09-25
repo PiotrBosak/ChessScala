@@ -1,4 +1,4 @@
-package backend
+package commondomain
 
 import cats.implicits.catsSyntaxEitherId
 import cats.syntax.contravariant.*

@@ -5,6 +5,7 @@ import chesslogic.board.{ Board, Position }
 import chesslogic.game.SimpleGame
 import io.circe.Codec
 import dev.profunktor.redis4cats.codecs.Codecs.derive
+import commondomain.*
 
 import java.util.UUID
 

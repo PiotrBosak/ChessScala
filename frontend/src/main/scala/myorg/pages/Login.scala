@@ -42,8 +42,8 @@ object Login {
 
   private def validateForm(form: Form): ValidatedNel[Problem, LoginData] = {
     (
-      UserName.make(form.username).toValidNel(InvalidEntry(ValidatedField.Username, "Username is too short")),
-      Password.make(form.password).toValidNel(InvalidEntry(ValidatedField.Password, "Invalid password"))
+      UserNameParam.make(form.username).toValidNel(InvalidEntry(ValidatedField.Username, "Username is too short")),
+      PasswordParam.make(form.password).toValidNel(InvalidEntry(ValidatedField.Password, "Invalid password"))
     )
       .mapN(LoginData.apply)
 

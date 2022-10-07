@@ -1,6 +1,10 @@
 package lib.logic.rules
 
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
 
 class KnightRulesTest extends AnyFlatSpec {
   private val game: FullGame = FullGame()

@@ -2,6 +2,10 @@ package lib.logic.rules
 
 import lib.logic.rules.PawnRules.{getPossibleAttacks, getPossibleMoves}
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
 
 class PawnRulesTest extends AnyFlatSpec {
   private val game = FullGame()

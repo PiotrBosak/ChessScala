@@ -2,6 +2,10 @@ package lib.logic.rules
 
 import lib.logic.rules.RookRules.{getPossibleAttacks, getPossibleMoves}
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
 
 class RookRulesTest extends AnyFlatSpec {
   val game = FullGame()

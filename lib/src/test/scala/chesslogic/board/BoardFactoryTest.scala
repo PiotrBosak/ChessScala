@@ -3,6 +3,15 @@ package logic.rules.board
 import lib.logic.rules.*
 import lib.logic.Color.*
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
+import lib.logic.board.Board
+import lib.logic.pieces.Piece.Pawn
+import lib.logic.pieces.Piece.Knight
+import lib.logic.pieces.Piece.Rook
+import lib.logic.pieces.Piece.Bishop
 
 class BoardFactoryTest extends AnyFlatSpec {
   val board: Board = Board()

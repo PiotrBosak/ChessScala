@@ -3,6 +3,10 @@ package lib.logic.rules
 import lib.logic.Color.*
 import lib.logic.rules.CheckAndMateRules.{isKingChecked, isKingMated}
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
 
 class CheckAndMateRulesTest extends AnyFlatSpec {
   private val game = FullGame()

@@ -2,6 +2,11 @@ package lib.logic.rules
 
 import lib.logic.Color.*
 import org.scalatest.flatspec.AnyFlatSpec
+import lib.logic.game.FullGame
+import lib.logic.board.Position
+import lib.logic.board.File.*
+import lib.logic.board.Rank.*
+import lib.logic.pieces.Piece.Rook
 
 class KingRulesTest extends AnyFlatSpec {
   private val game = FullGame()

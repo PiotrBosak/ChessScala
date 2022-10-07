@@ -1,12 +1,5 @@
 create type result as enum ('white','black','draw');
 
-create table users (
-    uuid UUID PRIMARY KEY,
-    name VARCHAR UNIQUE NOT NULL,
-    email VARCHAR UNIQUE NOT NULL,
-    password VARCHAR NOT NULL
-);
-
 create table results
 (
     uuid        uuid primary key,

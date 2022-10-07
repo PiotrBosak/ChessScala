@@ -16,13 +16,13 @@ object gamesearch {
     case SearchFailure
     case GameAlreadyStarted
 
-  enum PokeResult:
+  enum PollResult:
     case GameNotFoundYet
     case GameFound(gameId: GameId)
     case PokeFailure
 
-  object PokeResult {
-    implicit val pokeResultEncoder: Encoder[PokeResult] = Encoder.instance {
+  object PollResult {
+    implicit val pokeResultEncoder: Encoder[PollResult] = Encoder.instance {
       case GameNotFoundYet => Json.fromFields(List(("tag", Json.fromString("gameNotFoundYet"))))
       case GameFound(gameId) =>
         Json.fromFields(

@@ -3,7 +3,7 @@ package backend.http.routes.game
 import io.odin.Logger
 import gateway.algebras.GameSearchAlg
 import gateway.domain.gamesearch
-import gateway.domain.gamesearch.PokeResult.GameFound
+import gateway.domain.gamesearch.PollResult.GameFound
 import gateway.http.auth.users.CommonUser
 import cats.{ Applicative, Monad }
 import cats.syntax.all.*

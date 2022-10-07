@@ -2,7 +2,7 @@ package gateway.algebras
 
 import lib.domain.auth.UserId
 import lib.domain.game.GameId
-import gateway.domain.gamesearch.PokeResult.*
+import gateway.domain.gamesearch.PollResult.*
 import cats.{ Applicative, Monad, MonadThrow }
 import cats.effect.std.Queue
 import cats.syntax.all.*
@@ -12,7 +12,7 @@ import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import lib.domain.auth.*
 import lib.effects.RedisEncodeExt.asRedis
-import gateway.domain.gamesearch.{ PokeResult, StartSearchResult, StopSearchResult }
+import gateway.domain.gamesearch.{ PollResult, StartSearchResult, StopSearchResult }
 import skunk.Session
 
 import java.util.UUID
@@ -22,7 +22,7 @@ trait GameSearchAlg[F[_]] {
 
   def startSearch(userId: UserId): F[StartSearchResult]
 
-  def poll(userId: UserId): F[PokeResult]
+  def poll(userId: UserId): F[PollResult]
 
   def stopSearching(userId: UserId): F[StopSearchResult]
 
@@ -44,7 +44,7 @@ object GameSearchAlg {
           queue.offer(userId).as(SearchStartSuccessful)
       }
 
-    override def poll(userId: UserId): F[PokeResult] =
+    override def poll(userId: UserId): F[PollResult] =
       redis
         .get(userId.asRedis)
         .attemptTap {

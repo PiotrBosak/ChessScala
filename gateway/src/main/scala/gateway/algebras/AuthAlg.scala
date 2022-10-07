@@ -12,7 +12,7 @@ import cats.*
 import cats.syntax.all.*
 import gateway.domain.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
-import gateway.domain.RedisEncodeExt.asRedis
+import lib.effects.RedisEncodeExt.asRedis
 import io.circe.parser.decode
 import io.circe.syntax.*
 import pdi.jwt.JwtClaim

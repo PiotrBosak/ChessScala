@@ -1,7 +1,7 @@
 package gateway.algebras
 
-import gateway.domain.auth.UserId
-import gateway.domain.game.GameId
+import lib.domain.auth.UserId
+import lib.domain.game.GameId
 import gateway.domain.healthcheck.*
 import cats.effect.*
 import cats.effect.implicits.*

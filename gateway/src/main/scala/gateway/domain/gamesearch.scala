@@ -1,6 +1,6 @@
 package gateway.domain
 
-import gateway.domain.game.GameId
+import lib.domain.game.GameId
 
 import io.circe.syntax.*
 import io.circe.{ Codec, Encoder, Json }

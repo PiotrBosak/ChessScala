@@ -1,6 +1,7 @@
 package gateway.http.auth
 
-import gateway.domain.auth.{ Email, EncryptedPassword, UserId, UserName }
+import gateway.domain.auth.{ Email, EncryptedPassword }
+import lib.domain.auth.{  UserId, UserName }
 import gateway.http.jwt.jwt.JwtSymmetricAuth
 import lib.domain.auth.*
 import cats.{ Eq, Show }

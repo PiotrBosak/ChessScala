@@ -1,7 +1,7 @@
 package gateway.resources
 
 import io.odin.Logger
-import gateway.config.types.HttpServerConfig
+import lib.config.types.HttpServerConfig
 import cats.effect.kernel.{ Async, Resource }
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder

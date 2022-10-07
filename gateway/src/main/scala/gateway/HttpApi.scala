@@ -1,21 +1,21 @@
-package gateway.modules
-
-import io.odin.Logger
-import gateway.algebras.GameSearchAlg
-import gateway.http.auth.users.CommonUser
-import gateway.http.jwt.JwtAuthMiddleware
-import gateway.http.routes.auth.*
-import gateway.http.routes.*
-import gateway.http.routes.game.{ GameRoutes, GameSearchRoutes }
-import cats.effect.Async
-import cats.syntax.all.*
-import org.http4s.*
-import org.http4s.implicits.*
-import org.http4s.server.Router
-import org.http4s.server.middleware.*
-
-import scala.annotation.nowarn
-import scala.concurrent.duration.*
+// package gateway.modules
+//
+// import io.odin.Logger
+// import gateway.algebras.GameSearchAlg
+// import gateway.http.auth.users.CommonUser
+// import gateway.http.jwt.JwtAuthMiddleware
+// import gateway.http.routes.auth.*
+// import gateway.http.routes.*
+// import gateway.http.routes.game.{ GameRoutes, GameSearchRoutes }
+// import cats.effect.Async
+// import cats.syntax.all.*
+// import org.http4s.*
+// import org.http4s.implicits.*
+// import org.http4s.server.Router
+// import org.http4s.server.middleware.*
+//
+// import scala.annotation.nowarn
+// import scala.concurrent.duration.*
 
 // object HttpApi {
 //

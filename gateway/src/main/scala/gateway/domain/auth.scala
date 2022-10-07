@@ -10,7 +10,7 @@ import java.util.UUID
 import javax.crypto.Cipher
 import scala.util.control.NoStackTrace
 import lib.*
-import lib.server.{IdNewtype, Newtype}
+import lib.domain.{IdNewtype, Newtype}
 
 object auth {
 

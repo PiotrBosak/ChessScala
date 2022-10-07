@@ -7,7 +7,7 @@ import cats.Monad
 import cats.syntax.all.*
 import eu.timepit.refined.auto.*
 import io.circe.syntax.*
-import gateway.domain.RedisEncodeExt.asRedis
+import lib.effects.RedisEncodeExt.asRedis
 import gateway.http.jwt.jwt._
 import pdi.jwt.*
 

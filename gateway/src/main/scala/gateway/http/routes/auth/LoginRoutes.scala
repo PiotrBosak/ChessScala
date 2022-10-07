@@ -1,14 +1,14 @@
-package backend.http.routes.auth
+package gateway.http.routes.auth
 
-import backend.algebras.AuthAlg
-import backend.domain.auth.{ InvalidPassword, LoginUser, UserNotFound }
-import backend.ext.http4s.refined.RefinedRequestDecoder
+import gateway.algebras.AuthAlg
+import gateway.domain.auth.{ InvalidPassword, LoginUser, UserNotFound }
+import gateway.ext.http4s.refined.RefinedRequestDecoder
 import cats.MonadThrow
 import cats.syntax.all.*
 import org.http4s.*
-import backend.domain.auth.UserNameParamExtensions.toDomain as userToDomain
-import backend.domain.auth.PasswordParamExtensions.toDomain as passwordToDomain
-import backend.domain.auth.EmailParamExtensions.toDomain as emailToDomain
+import gateway.domain.auth.UserNameParamExtensions.toDomain as userToDomain
+import gateway.domain.auth.PasswordParamExtensions.toDomain as passwordToDomain
+import gateway.domain.auth.EmailParamExtensions.toDomain as emailToDomain
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl

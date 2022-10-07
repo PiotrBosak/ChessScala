@@ -1,13 +1,14 @@
-package gateway.domain
+package gameProcessor.domain
 
 import io.circe.Codec
 import dev.profunktor.redis4cats.codecs.Codecs.derive
 import lib.*
 import lib.domain.*
+import lib.domain.game.GameId
 import lib.domain.auth.*
 import lib.logic.board.{Board, Position}
 import lib.logic.game.SimpleGame
-import lib.server.IdNewtype
+import lib.domain.IdNewtype
 
 import java.util.UUID
 
@@ -20,16 +21,6 @@ object game {
     case GameAlreadyFinished
     case MoveSuccessful(newBoard: Board)
   }
-
-  type GameId = GameId.Type
-  object GameId extends IdNewtype
-
-  final case class PvPGame(
-      whitePlayer: UserId,
-      blackPlayer: UserId,
-      gameId: GameId,
-      simpleGame: SimpleGame
-  ) derives Codec.AsObject
 
   sealed trait DrawProposal
   case object DrawProposalSuccessful extends DrawProposal

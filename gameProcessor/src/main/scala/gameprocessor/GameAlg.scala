@@ -1,29 +1,29 @@
-package gameMatcher.algebras
+package gameProcessor.algebras
 
 import lib.domain.auth.UserId
-import lib.domain.game.{
+import gameProcessor.domain.game.{
   DrawProposal,
   DrawProposalAnswer,
   DrawProposalAnswerResult,
   ForfeitResult,
-  GameId,
   Move,
   MoveResult,
-  PvPGame
 }
+import lib.domain.game.*
 import cats.{ Applicative, MonadThrow }
 import cats.effect.Temporal
 import cats.effect.kernel.Resource
 import io.circe.syntax.*
 import cats.syntax.all.*
-import gameMatcher.domain.RedisEncodeExt.asRedis
-import gameMatcher.domain.RedisEncode._
+import lib.effects.RedisEncodeExt.asRedis
+import lib.effects.RedisEncode._
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import skunk.Session
 import MoveResult.*
 import lib.logic.board.Board
 import lib.logic.game.{BlackPlayer, Player, WhitePlayer}
+import lib.logic.game.PvPGame
 
 trait GameAlg[F[_]] {
 

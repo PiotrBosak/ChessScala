@@ -1,10 +1,10 @@
 package backend.http.routes.game
 
 import io.odin.Logger
-import backend.algebras.GameSearchAlg
-import backend.domain.gamesearch
-import backend.domain.gamesearch.PokeResult.GameFound
-import backend.http.auth.users.CommonUser
+import gateway.algebras.GameSearchAlg
+import gateway.domain.gamesearch
+import gateway.domain.gamesearch.PokeResult.GameFound
+import gateway.http.auth.users.CommonUser
 import cats.{ Applicative, Monad }
 import cats.syntax.all.*
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder

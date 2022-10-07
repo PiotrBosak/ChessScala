@@ -1,7 +1,8 @@
 package gateway.http.routes.auth
 
 import gateway.algebras.AuthAlg
-import gateway.domain.auth.{ CreateUser, UserName, UserNameInUse }
+import gateway.domain.auth.{ CreateUser, UserNameInUse }
+import lib.domain.auth.{ UserName }
 import gateway.ext.http4s.refined.RefinedRequestDecoder
 import gateway.http.routes.auth.UserRoutes.RegistrationResponse
 import cats.MonadThrow

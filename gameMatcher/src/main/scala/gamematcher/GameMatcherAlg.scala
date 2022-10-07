@@ -1,14 +1,14 @@
-package backend.algebras
+package gameMatcher.algebras
 
 import io.odin.Logger
-import backend.domain.auth.UserId
-import backend.domain.game.{GameId, PvPGame}
-import backend.effects.GenUUID
+import lib.domain.auth.UserId
+import lib.domain.game.GameId
+import lib.effects.GenUUID
 import cats.Applicative
 import cats.syntax.all.*
 import cats.effect.kernel.{Ref, Resource, Temporal}
 import cats.effect.std.{Queue, Random}
-import backend.domain.RedisEncodeExt.asRedis
+import lib.effects.RedisEncodeExt.asRedis
 import dev.profunktor.redis4cats.RedisCommands
 import lib.logic.board.Board
 import lib.logic.game
@@ -17,6 +17,7 @@ import io.circe.syntax.*
 import skunk.Session
 
 import scala.concurrent.duration.FiniteDuration
+import lib.logic.game.PvPGame
 
 trait GameMatcherAlg[F[_]] {
 

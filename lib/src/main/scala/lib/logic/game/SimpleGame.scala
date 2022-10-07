@@ -6,8 +6,19 @@ import FullGame.Turn.{ BlackTurn, WhiteTurn }
 import cats.syntax.all.*
 import lib.logic.board.{Board, Move, Position}
 import io.circe.Codec
+import lib.domain.auth.UserId
+import lib.domain.game.GameId
+
+  final case class PvPGame(
+      whitePlayer: UserId,
+      blackPlayer: UserId,
+      gameId: GameId,
+      simpleGame: SimpleGame
+  ) derives Codec.AsObject
+
 
 case class SimpleGame(currentBoard: Board, turn: Turn = WhiteTurn) derives Codec.AsObject {
+
 
   def makeMove(movingPlayer: Player, from: Position, to: Position): Option[SimpleGame] = {
     val possibleMovesOption = currentBoard.getPossibleMoves(from)

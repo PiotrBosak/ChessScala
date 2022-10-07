@@ -1,10 +1,10 @@
-package backend.http.routes.auth
+package gateway.http.routes.auth
 
-import backend.algebras.AuthAlg
-import backend.http.auth.users.CommonUser
+import gateway.algebras.AuthAlg
+import gateway.http.auth.users.CommonUser
 import cats.Monad
 import cats.syntax.all.*
-import backend.domain.jwt.AuthHeaders
+import gateway.domain.jwt.AuthHeaders
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{ AuthMiddleware, Router }
 import org.http4s.{ AuthedRoutes, HttpRoutes }

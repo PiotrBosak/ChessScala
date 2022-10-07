@@ -1,7 +1,7 @@
 package gateway.algebras
 
-import gateway.domain.auth.UserId
-import gateway.domain.game.GameId
+import lib.domain.auth.UserId
+import lib.domain.game.GameId
 import gateway.domain.gamesearch.PokeResult.*
 import cats.{ Applicative, Monad, MonadThrow }
 import cats.effect.std.Queue
@@ -11,7 +11,7 @@ import cats.effect.kernel.{ Concurrent, Ref, Resource }
 import dev.profunktor.redis4cats.RedisCommands
 import io.circe.Json
 import lib.domain.auth.*
-import gateway.domain.RedisEncodeExt.asRedis
+import lib.effects.RedisEncodeExt.asRedis
 import gateway.domain.gamesearch.{ PokeResult, StartSearchResult, StopSearchResult }
 import skunk.Session
 

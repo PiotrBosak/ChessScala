@@ -1,6 +1,6 @@
 package gateway.resources
 
-import gateway.config.types.HttpClientConfig
+import lib.config.types.HttpClientConfig
 import cats.effect.kernel.{ Async, Resource }
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder

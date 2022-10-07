@@ -1,4 +1,4 @@
-package gateway.domain
+package lib.effects
 
 import io.circe.Encoder
 import io.circe.syntax.*

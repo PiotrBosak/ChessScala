@@ -14,10 +14,10 @@ lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(frontend, backend, gateway, gameMatcher, gameProcessor, tests)
+  .aggregate(frontend, gateway, gameMatcher, gameProcessor, tests)
   .settings(scalafmtOnCompile := true)
 
-lazy val tests = (project in file("tests"))
+lazy val tests = (project in file("modules/tests"))
   .configs(IntegrationTest)
   .settings(
     name := "chess-backend-test-suite",
@@ -55,9 +55,8 @@ lazy val tests = (project in file("tests"))
     ),
     scalaVersion := "3.2.0"
   )
-  .dependsOn(backend)
 
-lazy val lib = (project in file("lib"))
+lazy val lib = (project in file("modules/lib"))
   .settings(scalacOptions += "-explain")
   .settings(
     name := "lib",
@@ -85,7 +84,7 @@ lazy val lib = (project in file("lib"))
   .settings(scalacOptions -= "-Ywarn-unused")
   .settings(scalacOptions -= "-Xfatal-warnings")
 
-lazy val gateway = (project in file("gateway"))
+lazy val gateway = (project in file("modules/gateway"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(AshScriptPlugin)
@@ -136,7 +135,7 @@ lazy val gateway = (project in file("gateway"))
     )
   )
   .dependsOn(lib)
-lazy val gameMatcher = (project in file("gameMatcher"))
+lazy val gameMatcher = (project in file("modules/gameMatcher"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(AshScriptPlugin)
@@ -181,7 +180,7 @@ lazy val gameMatcher = (project in file("gameMatcher"))
   )
   .dependsOn(lib)
 
-lazy val gameProcessor = (project in file("gameProcessor"))
+lazy val gameProcessor = (project in file("modules/gameProcessor"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(AshScriptPlugin)
@@ -226,52 +225,8 @@ lazy val gameProcessor = (project in file("gameProcessor"))
     )
   )
   .dependsOn(lib)
-lazy val backend = (project in file("backend"))
-  .enablePlugins(DockerPlugin)
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(AshScriptPlugin)
-  .settings(
-    name := "chess-backend",
-    Defaults.itSettings,
-    dockerBaseImage       := "openjdk:11-jre-slim-buster",
-    makeBatScripts        := Seq(),
-    packageName in Docker := "chess",
-    dockerExposedPorts ++= Seq(8080),
-    dockerUpdateLatest := true,
-    scalaVersion       := "3.2.0",
-    libraryDependencies ++= Seq(
-      Libraries.cats,
-      Libraries.catsEffect,
-      Libraries.catsRetry,
-      Libraries.jwtScala("core"),
-      Libraries.jwtScala("circe"),
-      Libraries.circeCore,
-      Libraries.circeParser,
-      Libraries.circeExtras,
-      Libraries.circeRefined,
-      Libraries.cirisCore,
-      Libraries.cirisRefined,
-      Libraries.fs2Core,
-      Libraries.kittens,
-      Libraries.monocleCore,
-      Libraries.neutronCore,
-      Libraries.odin,
-      Libraries.redis4catsEffects,
-      Libraries.refinedCore,
-      Libraries.refinedCats,
-      Libraries.skunk("core"),
-      Libraries.skunk("circe"),
-      Libraries.slf4j,
-      Libraries.monocleLaw       % Test,
-      Libraries.scalacheck       % Test,
-      Libraries.weaverCats       % Test,
-      Libraries.weaverDiscipline % Test,
-      Libraries.weaverScalaCheck % Test
-    )
-  )
-  .dependsOn(lib)
 
-lazy val frontend = (project in file("frontend"))
+lazy val frontend = (project in file("modules/frontend"))
   .enablePlugins(ScalaJSPlugin)
   .settings( // Normal settings
     name         := "chessfronttyrian",

@@ -1,1 +1,7 @@
-#+TITLE: Notes
+#+title: Notes
+
+
+* trzeba użyć tego web socketa
+*** postawic serwer http ktory bedzie odpowiadal za rejestracje/logowanie itd
+*** jak ktos chce uzyc jakiejs tam funkcjonalnosci to wola serwer http, autentykuje sie, a potem wysyla tego jwt tokena w pierwszej wiadomosci, potem serwer odpowiada ze git, a potem wysyla juz normalne requesty
+*** wszystko bedzie przechodzic przez web socketa, a potem pulsarem bedzie rozsylane gdzie trzeba

@@ -2,7 +2,7 @@ package lib.config
 
 import ciris.*
 import ciris.refined.*
-import com.comcast.ip4s.{ Host, Port }
+import com.comcast.ip4s.{Host, Port}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.net.UserPortNumber
 import lib.*
@@ -32,7 +32,7 @@ object types {
 
   case class CheckoutConfig(
       retriesLimit: Int,
-      retriesBackoff: FiniteDuration
+      retriesBackoff: FiniteDuration,
   )
 
   case class AppConfig(
@@ -43,13 +43,13 @@ object types {
       httpClientConfig: HttpClientConfig,
       postgreSQL: PostgreSQLConfig,
       redis: RedisConfig,
-      httpServerConfig: HttpServerConfig
+      httpServerConfig: HttpServerConfig,
   )
 
   case class AdminJwtConfig(
       secretKey: Secret[JwtSecretKeyConfig],
       claimStr: Secret[JwtClaimConfig],
-      adminToken: Secret[AdminUserTokenConfig]
+      adminToken: Secret[AdminUserTokenConfig],
   )
 
   case class PostgreSQLConfig(
@@ -58,7 +58,7 @@ object types {
       user: String,
       password: String,
       database: String,
-      max: Int
+      max: Int,
   )
 
   type RedisURI = RedisURI.Type
@@ -72,12 +72,12 @@ object types {
 
   case class HttpServerConfig(
       host: Host,
-      port: Port
+      port: Port,
   )
 
   case class HttpClientConfig(
       timeout: FiniteDuration,
-      idleTimeInPool: FiniteDuration
+      idleTimeInPool: FiniteDuration,
   )
 
 }

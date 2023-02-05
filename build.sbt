@@ -1,6 +1,7 @@
 name := "ChessScala"
 
 import Dependencies.{ Libraries, _ }
+//todo dorob common settings
 
 import sbtwelcome._
 import sbt.Keys.libraryDependencies
@@ -14,8 +15,16 @@ lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(frontend, gateway, gameMatcher, gameProcessor, tests)
+  .aggregate(frontend, httpserver, gameMatcher, gameProcessor, ws, tests)
   .settings(scalafmtOnCompile := true)
+
+def dockerSettings(name: String) = List(
+  Docker / packageName := s"trading-$name",
+  dockerBaseImage      := "jdk17-curl:latest",
+  dockerExposedPorts ++= List(8080),
+  makeBatScripts     := Nil,
+  dockerUpdateLatest := true
+)
 
 lazy val tests = (project in file("modules/tests"))
   .configs(IntegrationTest)
@@ -72,6 +81,9 @@ lazy val lib = (project in file("modules/lib"))
       Libraries.monocleLaw,
       Libraries.cirisCore,
       Libraries.cirisRefined,
+      Libraries.neutronCore,
+      Libraries.odin,
+      Libraries.redis4catsEffects,
       Libraries.refinedCore,
       Libraries.refinedCats,
       Libraries.ip4s,
@@ -84,7 +96,7 @@ lazy val lib = (project in file("modules/lib"))
   .settings(scalacOptions -= "-Ywarn-unused")
   .settings(scalacOptions -= "-Xfatal-warnings")
 
-lazy val gateway = (project in file("modules/gateway"))
+lazy val httpserver = (project in file("modules/http-server"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(AshScriptPlugin)
@@ -132,6 +144,23 @@ lazy val gateway = (project in file("modules/gateway"))
       Libraries.weaverCats       % Test,
       Libraries.weaverDiscipline % Test,
       Libraries.weaverScalaCheck % Test
+    )
+  )
+  .dependsOn(lib)
+
+lazy val ws = (project in file("modules/ws-server"))
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(AshScriptPlugin)
+  .settings(dockerSettings("ws"))
+  .settings(scalaVersion := "3.2.0")
+  .settings(
+    libraryDependencies ++= List(
+      Libraries.http4sCirce,
+      Libraries.http4sMetrics,
+      Libraries.http4sServer,
+      Libraries.http4sServer,
+      Libraries.http4sDsl,
+      Libraries.neutronCore
     )
   )
   .dependsOn(lib)

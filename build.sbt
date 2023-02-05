@@ -1,6 +1,6 @@
 name := "ChessScala"
 
-import Dependencies.{ Libraries, _ }
+import Dependencies.{Libraries, _}
 //todo dorob common settings
 
 import sbtwelcome._
@@ -9,20 +9,20 @@ ThisBuild / watchBeforeCommand := Watch.clearScreen
 
 version := "0.1"
 
-val catsVersion    = "2.7.0"
+val catsVersion = "2.7.0"
 val monocleVersion = "3.0.0-M6"
 lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(frontend, httpserver, gameMatcher, gameProcessor, ws, tests)
+  .aggregate(httpserver, gameMatcher, gameProcessor, ws, tests)
   .settings(scalafmtOnCompile := true)
 
 def dockerSettings(name: String) = List(
   Docker / packageName := s"trading-$name",
-  dockerBaseImage      := "jdk17-curl:latest",
+  dockerBaseImage := "jdk17-curl:latest",
   dockerExposedPorts ++= List(8080),
-  makeBatScripts     := Nil,
+  makeBatScripts := Nil,
   dockerUpdateLatest := true
 )
 
@@ -70,9 +70,9 @@ lazy val lib = (project in file("modules/lib"))
   .settings(
     name := "lib",
     libraryDependencies ++= Seq(
-      "org.typelevel"              %% "cats-core"     % catsVersion,
-      "org.scalatest"              %% "scalatest"     % "3.2.9",
-      "com.github.julien-truffaut" %% "monocle-core"  % monocleVersion,
+      "org.typelevel" %% "cats-core" % catsVersion,
+      "org.scalatest" %% "scalatest" % "3.2.9",
+      "com.github.julien-truffaut" %% "monocle-core" % monocleVersion,
       "com.github.julien-truffaut" %% "monocle-macro" % monocleVersion,
       Libraries.cats,
       Libraries.catsEffect,
@@ -103,12 +103,12 @@ lazy val httpserver = (project in file("modules/http-server"))
   .settings(
     name := "chess-gateway",
     Defaults.itSettings,
-    dockerBaseImage       := "openjdk:11-jre-slim-buster",
-    makeBatScripts        := Seq(),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    makeBatScripts := Seq(),
     packageName in Docker := "chess-gateway",
     dockerExposedPorts ++= Seq(8080),
     dockerUpdateLatest := true,
-    scalaVersion       := "3.2.0",
+    scalaVersion := "3.2.0",
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
@@ -139,9 +139,9 @@ lazy val httpserver = (project in file("modules/http-server"))
       Libraries.skunk("circe"),
       Libraries.slf4j,
       Libraries.squants,
-      Libraries.monocleLaw       % Test,
-      Libraries.scalacheck       % Test,
-      Libraries.weaverCats       % Test,
+      Libraries.monocleLaw % Test,
+      Libraries.scalacheck % Test,
+      Libraries.weaverCats % Test,
       Libraries.weaverDiscipline % Test,
       Libraries.weaverScalaCheck % Test
     )
@@ -171,12 +171,12 @@ lazy val gameMatcher = (project in file("modules/gameMatcher"))
   .settings(
     name := "chess-game-matcher",
     Defaults.itSettings,
-    dockerBaseImage       := "openjdk:11-jre-slim-buster",
-    makeBatScripts        := Seq(),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    makeBatScripts := Seq(),
     packageName in Docker := "chess-game-matcher",
     dockerExposedPorts ++= Seq(8080),
     dockerUpdateLatest := true,
-    scalaVersion       := "3.2.0",
+    scalaVersion := "3.2.0",
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
@@ -200,9 +200,9 @@ lazy val gameMatcher = (project in file("modules/gameMatcher"))
       Libraries.skunk("core"),
       Libraries.skunk("circe"),
       Libraries.slf4j,
-      Libraries.monocleLaw       % Test,
-      Libraries.scalacheck       % Test,
-      Libraries.weaverCats       % Test,
+      Libraries.monocleLaw % Test,
+      Libraries.scalacheck % Test,
+      Libraries.weaverCats % Test,
       Libraries.weaverDiscipline % Test,
       Libraries.weaverScalaCheck % Test
     )
@@ -216,12 +216,12 @@ lazy val gameProcessor = (project in file("modules/gameProcessor"))
   .settings(
     name := "chess-game-processor",
     Defaults.itSettings,
-    dockerBaseImage       := "openjdk:11-jre-slim-buster",
-    makeBatScripts        := Seq(),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    makeBatScripts := Seq(),
     packageName in Docker := "gameProcessor",
     dockerExposedPorts ++= Seq(8080),
     dockerUpdateLatest := true,
-    scalaVersion       := "3.2.0",
+    scalaVersion := "3.2.0",
     libraryDependencies ++= Seq(
       Libraries.cats,
       Libraries.catsEffect,
@@ -246,53 +246,11 @@ lazy val gameProcessor = (project in file("modules/gameProcessor"))
       Libraries.skunk("circe"),
       Libraries.slf4j,
       Libraries.squants,
-      Libraries.monocleLaw       % Test,
-      Libraries.scalacheck       % Test,
-      Libraries.weaverCats       % Test,
+      Libraries.monocleLaw % Test,
+      Libraries.scalacheck % Test,
+      Libraries.weaverCats % Test,
       Libraries.weaverDiscipline % Test,
       Libraries.weaverScalaCheck % Test
-    )
-  )
-  .dependsOn(lib)
-
-lazy val frontend = (project in file("modules/frontend"))
-  .enablePlugins(ScalaJSPlugin)
-  .settings( // Normal settings
-    name         := "chessfronttyrian",
-    version      := "0.0.1",
-    scalaVersion := "3.2.0",
-    organization := "myorg",
-    libraryDependencies ++= Seq(
-      "io.indigoengine" %%% "tyrian-io" % "0.6.0",
-      "org.scalameta"   %%% "munit"     % "1.0.0-M6" % Test
-    ),
-    testFrameworks += new TestFramework("munit.Framework"),
-    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
-    autoAPIMappings := true
-  )
-  .settings( // Welcome message
-    logo := "ChessFrontTyrian (v" + version.value + ")",
-    usefulTasks := Seq(
-      UsefulTask("", "fastOptJS", "Rebuild the JS (use during development)"),
-      UsefulTask(
-        "",
-        "fullOptJS",
-        "Rebuild the JS and optimise (use in production)"
-      ),
-      UsefulTask("", "code", "Launch VSCode")
-    ),
-    logoColor        := scala.Console.MAGENTA,
-    aliasColor       := scala.Console.BLUE,
-    commandColor     := scala.Console.CYAN,
-    descriptionColor := scala.Console.WHITE,
-    libraryDependencies ++= Seq(
-      "io.circe"      %%% s"circe-core"          % "0.14.2",
-      "org.http4s"    %%% s"http4s-ember-client" % "1.0.0-M35",
-      "io.circe"      %%% s"circe-parser"        % "0.14.2",
-      "org.typelevel" %%% "kittens"              % "3.0.0-M4",
-      "org.typelevel" %%% "cats-core"            % "2.7.0",
-      "org.typelevel" %%% "cats-effect"          % "3.3.5",
-      "org.scalatest" %%% "scalatest"            % "3.2.9"
     )
   )
   .dependsOn(lib)

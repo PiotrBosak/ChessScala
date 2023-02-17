@@ -16,7 +16,7 @@ import myorg.pages.Commons.Problem.*
 object Register {
 
   def update[F[_]: UserAlg](msg: Msg, model: Model): (Model, Cmd[F, Msg]) = {
-    println(msg)
+    println("Updaring register")
     msg match
       case Msg.EnteredUsername(username) => 
         (model.copy(form = model.form.copy(username = username)), Cmd.None)

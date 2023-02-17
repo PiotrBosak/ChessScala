@@ -20,7 +20,7 @@ import lib.logic.board.{Board, File, MoveType, Position, Rank, Tile}
 import lib.logic.pieces.Piece
 import myorg.pages.ChessBoard.Msg
 
-object ChessBoard extends TyrianApp[Msg, Model] {
+object ChessBoard {
   import Msg.*
   import SelectionState.*
 
@@ -34,7 +34,7 @@ object ChessBoard extends TyrianApp[Msg, Model] {
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
     (initModel, Cmd.None)
 
-  def update(model: Model): Msg => (Model, Cmd[IO, Msg]) = { case Select(position) =>
+  def update(msg: Msg, model: Model): (Model, Cmd[IO, Msg]) = msg match { case Select(position) =>
     updateSelection(model, position)
   }
 

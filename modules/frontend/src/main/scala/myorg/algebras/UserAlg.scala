@@ -5,8 +5,7 @@ import lib.user.Profile
 import org.http4s.ember.client.EmberClientBuilder
 import cats.effect.IO
 import cats.implicits.*
-import org.http4s.Request
-import org.http4s.Uri
+import org.http4s.{Entity, Request, Uri}
 import cats.effect.Resource
 import myorg.pages.Main
 
@@ -26,6 +25,7 @@ object UserAlg {
     def login(loginData: LoginData): IO[Option[Profile]] = ???
 
     def register(registrationData: RegistrationData): IO[Option[Profile]] = {
+      IO.println("HELLLLLLLLLLLLLLLLLLLLLOL") >>
       EmberClientBuilder
         .default[IO]
         .build
@@ -33,7 +33,7 @@ object UserAlg {
           client
             .run {
               Request[IO](
-                uri = Uri.fromString("localhost:8080/api") match {
+                uri = Uri.fromString("localhost:8080/users") match {
                   case Left(_)  => throw new RuntimeException()
                   case Right(a) => a
                 }

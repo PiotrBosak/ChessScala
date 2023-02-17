@@ -20,6 +20,7 @@ import lib.logic.game.FullGame.Turn
 import lib.logic.board.{Board, File, MoveType, Position, Rank, Tile}
 import lib.logic.pieces.Piece
 import myorg.algebras.UserAlg.*
+import myorg.pages.Main.Msg.{GotChessBoardMessage, GotLoginMessage, GotRegisterMessage}
 import myorg.pages.Main.{Model, Msg}
 import tyrian.Navigation.Result
 
@@ -37,27 +38,45 @@ object Main extends TyrianApp[Msg, Model] {
   enum Msg {
     case NoOp
     case SwitchPage(page: Page)
+    case GotLoginMessage(msg: Login.Msg)
+    case GotRegisterMessage(msg: Register.Msg)
+    case GotChessBoardMessage(msg: ChessBoard.Msg)
   }
 
   enum Page {
     case Login
     case Register
   }
-  def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
-    {
-      case Msg.SwitchPage(Page.Register) =>
+  def update(model: Model): Msg => (Model, Cmd[IO, Msg]) = msg => {
+    println("XXXXXXXXXXXXXXXXXXXXXX")
+    println((model, msg))
+    (model, msg) match {
+      case (Model.Login(model), GotLoginMessage(msg)) =>
+        Login.update(msg, model).updateWith(Model.Login.apply, GotLoginMessage.apply)
+      case (Model.Register(model), GotRegisterMessage(msg)) =>
+        Register.update(msg, model).updateWith(Model.Register.apply, GotRegisterMessage.apply)
+      case (Model.ChessBoard(model), GotChessBoardMessage(msg)) =>
+        ChessBoard.update(msg, model).updateWith(Model.ChessBoard.apply, GotChessBoardMessage.apply)
+      case (_, Msg.SwitchPage(Page.Register)) =>
         (Model.Register(RegisterPage.init()), Cmd.None)
-      case Msg.SwitchPage(Page.Login) =>
+      case (_, Msg.SwitchPage(Page.Login)) =>
         (Model.Login(LoginPage.init()), Cmd.None)
-      case _ => (model, Cmd.None)
-
+      case (_, _) => (model, Cmd.None)
     }
+  }
+
+  extension [SubModel, SubMsg] (tuple: (SubModel, Cmd[IO, SubMsg])) {
+    private def updateWith(toMainModel: SubModel => Model, toMainMsg: SubMsg => Msg): (Model, Cmd[IO, Msg]) = {
+      (toMainModel(tuple._1), tuple._2.map(toMainMsg))
+    }
+  }
 
   def init(flags: Map[String, String]): (Model, Cmd[cats.effect.IO, Msg]) =
     (Model.Login(LoginPage.init()), Cmd.None)
   override def subscriptions(model: Model): Sub[cats.effect.IO, Msg] =
     Navigation.onLocationHashChange {
       case Result.HashChange(_, _, _, newFragment) =>
+        println("got into subscriptions")
         Route.fromString(newFragment) match {
           case Some(Route.Register) => Msg.SwitchPage(Page.Register)
           case Some(Route.Login) => Msg.SwitchPage(Page.Login)
@@ -67,9 +86,9 @@ object Main extends TyrianApp[Msg, Model] {
 
   def view(model: Model): Html[Msg] = {
     model match {
-      case Model.Login(model) => LoginPage.view(model).map(_ => Msg.NoOp)
-      case Model.Register(model)  => RegisterPage.view(model).map(_ => Msg.NoOp)
-      case Model.ChessBoard(model) => ChessBoardPage.view(model).map(_ => Msg.NoOp)
+      case Model.Login(model) => LoginPage.view(model).map(Msg.GotLoginMessage.apply)
+      case Model.Register(model)  => RegisterPage.view(model).map(Msg.GotRegisterMessage.apply)
+      case Model.ChessBoard(model) => ChessBoardPage.view(model).map(Msg.GotChessBoardMessage.apply)
     }
 
   }

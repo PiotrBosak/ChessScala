@@ -1,4 +1,4 @@
-package chess.core.http
+package chess.ws
 
 import cats.effect.kernel.{ Async, Resource }
 import cats.effect.std.Console
@@ -7,6 +7,7 @@ import com.comcast.ip4s.*
 import org.http4s.*
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
+import lib.routes.HealthRoutes
 import org.http4s.metrics.prometheus.{ Prometheus, PrometheusExportService }
 import org.http4s.server.Server
 import org.http4s.server.middleware.Metrics

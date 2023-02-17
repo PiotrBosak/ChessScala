@@ -1,6 +1,6 @@
 import {
   TyrianApp
-} from './frontend/target/scala-3.1.2/chessfronttyrian-fastopt.js';
+} from './modules/frontend/target/scala-3.2.0/chessfronttyrian-fastopt.js';
 
 TyrianApp.launch("myapp");
 

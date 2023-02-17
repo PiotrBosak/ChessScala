@@ -40,6 +40,7 @@ object UserAlg {
               )
             }
             .use { resp =>
+              println("Got response!!!!!!!!!!!!")
               IO(None)
             }
         }

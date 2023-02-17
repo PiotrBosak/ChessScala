@@ -1,7 +1,7 @@
-package backend.http.routes
+package lib.routes
 
-import gateway.algebras.HealthCheckAlg
 import cats.Monad
+import gateway.algebras.HealthCheckAlg
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.Http4sDsl

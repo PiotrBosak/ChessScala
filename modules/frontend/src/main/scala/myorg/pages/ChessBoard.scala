@@ -1,4 +1,4 @@
-package myorg
+package myorg.pages
 
 import cats.effect.IO
 import myorg.utils.HtmlUtils.*
@@ -9,18 +9,20 @@ import lib.logic.board.Rank.*
 import lib.logic.board.File.*
 import tyrian.*
 import tyrian.Html.*
-import myorg.Model
-import myorg.Msg
+import myorg.pages.ChessBoard.Model
+import myorg.pages.ChessBoard.Msg
 import lib.logic.board.MoveType.*
-import myorg.Msg.*
 import lib.logic.board.Rank.*
+
 import scala.scalajs.js.annotation.*
 import lib.logic.game.FullGame.Turn
 import lib.logic.board.{Board, File, MoveType, Position, Rank, Tile}
 import lib.logic.pieces.Piece
-import myorg.SelectionState.*
+import myorg.pages.ChessBoard.Msg
 
-object ChessBoardPage extends TyrianApp[Msg, Model] {
+object ChessBoard extends TyrianApp[Msg, Model] {
+  import Msg.*
+  import SelectionState.*
 
   private def initModel: Model = Model(
     SelectionState.Unselected,
@@ -209,27 +211,28 @@ object ChessBoardPage extends TyrianApp[Msg, Model] {
       attribute("height", "100")
     )
   }
+
+  final case class Model(
+                          state: SelectionState,
+                          board: Board,
+                          turn: Turn,
+                          playerColor: PlayerColor
+                        )
+
+  enum PlayerColor {
+    case White
+    case Black
+  }
+  enum SelectionState {
+    case Unselected
+    case Selected(position: Position, possibleMoves: List[(MoveType, Position)])
+  }
+
+  enum Msg {
+    case Select(position: Position)
+  }
+
+  enum TileType:
+    case Normal, Selected, PossibleMove, PossibleAttack
 }
 
-final case class Model(
-    state: SelectionState,
-    board: Board,
-    turn: Turn,
-    playerColor: PlayerColor
-)
-
-enum PlayerColor {
-  case White
-  case Black
-}
-enum SelectionState {
-  case Unselected
-  case Selected(position: Position, possibleMoves: List[(MoveType, Position)])
-}
-
-enum Msg {
-  case Select(position: Position)
-}
-
-enum TileType:
-  case Normal, Selected, PossibleMove, PossibleAttack

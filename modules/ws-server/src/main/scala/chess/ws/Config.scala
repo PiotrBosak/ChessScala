@@ -4,10 +4,11 @@ import lib.domain.{*, given}
 import cats.effect.kernel.Async
 import cats.syntax.all.*
 import ciris.*
+import lib.domain.PulsarURI.given_Wrapper_A_Type
 import com.comcast.ip4s.*
 import dev.profunktor.pulsar.Config as PulsarConfig
 import lib.domain.OrphanInstanceGivens
-import lib.domain.domain.PulsarURI
+import lib.domain.PulsarURI
 
 final case class WsConfig(
     httpPort: Port,

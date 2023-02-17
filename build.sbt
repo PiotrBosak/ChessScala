@@ -15,8 +15,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "chess"
   )
-  .aggregate(httpserver, gameMatcher, gameProcessor, ws, tests)
-  .settings(scalafmtOnCompile := true)
+  .aggregate(frontend, httpserver, gameMatcher, gameProcessor, ws, tests)
 
 def dockerSettings(name: String) = List(
   Docker / packageName := s"trading-$name",
@@ -65,7 +64,7 @@ lazy val tests = (project in file("modules/tests"))
     scalaVersion := "3.2.0"
   )
 
-lazy val lib = (project in file("modules/lib"))
+lazy val lib = (crossProject(JSPlatform, JVMPlatform) in file("modules/lib"))
   .settings(scalacOptions += "-explain")
   .settings(
     name := "lib",
@@ -78,6 +77,8 @@ lazy val lib = (project in file("modules/lib"))
       Libraries.catsEffect,
       Libraries.monocleCore,
       Libraries.squants,
+      Libraries.http4sCirce,
+      Libraries.http4sDsl,
       Libraries.monocleLaw,
       Libraries.cirisCore,
       Libraries.cirisRefined,
@@ -146,7 +147,7 @@ lazy val httpserver = (project in file("modules/http-server"))
       Libraries.weaverScalaCheck % Test
     )
   )
-  .dependsOn(lib)
+  .dependsOn(lib.jvm)
 
 lazy val ws = (project in file("modules/ws-server"))
   .enablePlugins(DockerPlugin)
@@ -163,7 +164,7 @@ lazy val ws = (project in file("modules/ws-server"))
       Libraries.neutronCore
     )
   )
-  .dependsOn(lib)
+  .dependsOn(lib.jvm)
 lazy val gameMatcher = (project in file("modules/gameMatcher"))
   .enablePlugins(DockerPlugin)
   .enablePlugins(JavaAppPackaging)
@@ -207,7 +208,7 @@ lazy val gameMatcher = (project in file("modules/gameMatcher"))
       Libraries.weaverScalaCheck % Test
     )
   )
-  .dependsOn(lib)
+  .dependsOn(lib.jvm)
 
 lazy val gameProcessor = (project in file("modules/gameProcessor"))
   .enablePlugins(DockerPlugin)
@@ -253,6 +254,48 @@ lazy val gameProcessor = (project in file("modules/gameProcessor"))
       Libraries.weaverScalaCheck % Test
     )
   )
-  .dependsOn(lib)
+  .dependsOn(lib.jvm)
+
+lazy val frontend = (project in file("modules/frontend"))
+  .enablePlugins(ScalaJSPlugin)
+  .settings( // Normal settings
+    name := "chessfronttyrian",
+    version := "0.0.1",
+    scalaVersion := "3.2.0",
+    organization := "myorg",
+    libraryDependencies ++= Seq(
+      "io.indigoengine" %%% "tyrian-io" % "0.6.0",
+      "org.scalameta" %%% "munit" % "1.0.0-M6" % Test
+    ),
+    testFrameworks += new TestFramework("munit.Framework"),
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    autoAPIMappings := true
+  )
+  .settings( // Welcome message
+    logo := "ChessFrontTyrian (v" + version.value + ")",
+    usefulTasks := Seq(
+      UsefulTask("", "fastOptJS", "Rebuild the JS (use during development)"),
+      UsefulTask(
+        "",
+        "fullOptJS",
+        "Rebuild the JS and optimise (use in production)"
+      ),
+      UsefulTask("", "code", "Launch VSCode")
+    ),
+    logoColor := scala.Console.MAGENTA,
+    aliasColor := scala.Console.BLUE,
+    commandColor := scala.Console.CYAN,
+    descriptionColor := scala.Console.WHITE,
+    libraryDependencies ++= Seq(
+      "io.circe" %%% s"circe-core" % "0.14.2",
+      "org.http4s" %%% s"http4s-ember-client" % "1.0.0-M35",
+      "io.circe" %%% s"circe-parser" % "0.14.2",
+      "org.typelevel" %%% "kittens" % "3.0.0-M4",
+      "org.typelevel" %%% "cats-core" % "2.7.0",
+      "org.typelevel" %%% "cats-effect" % "3.3.5",
+      "org.scalatest" %%% "scalatest" % "3.2.9"
+    )
+  )
+  .dependsOn(lib.js)
 
 addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")
